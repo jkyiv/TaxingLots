@@ -23,7 +23,7 @@ Globably, this program:
     to sdout, so it never modifies its imput files.
 
  2. Creates a list "stack" of commodity lots with dates and cost basis.
-    Currently it handles bitcoin (BTC), litecoin (LTC), and ehter (ETH),
+    Currently it handles bitcoin (BTC), litecoin (LTC), and ether (ETH),
     reducing from the oldest lot of each commodity first (First In, First
     Out, FIFO).
 
@@ -36,40 +36,39 @@ Globably, this program:
     C. Output currently assumes USD as reference currency for all lot cost
        basis calculations, to keep the IRS happy.
         
-Note:
-    Ledger is a powerful, double-entry accounting system that is accessed
-    from the UNIX command-line. Ledger is written by John Wiegley, released
-    under the BSD license, and is available at http://ledger-cli.org.
+Notes:
 
-    TaxingLots.py returns lot reductions using Ledger's syntax, assuming USD
-    as the reference currency for taxation purposes. It does not check that the
-    transactions are balanced, since Ledger already does that. It simply manages
-    booking and reducing commodity/cryptocurrency lots, but leaves the user in
-    control of the overall transaction structure.
+Ledger is a powerful, double-entry accounting system that is accessed from the
+UNIX command-line. Ledger is written by John Wiegley, released under the BSD
+license, and is available at http://ledger-cli.org.
 
-    The program requires a CSV file with exchange rates for all commodities.
-    Modify the getrates() function according to your needs and your rates file.
+TaxingLots.py returns lot reductions using Ledger's syntax, assuming USD as the
+reference currency for taxation purposes. It does not check that the
+transactions are balanced, since Ledger already does that. It simply manages
+booking and reducing commodity/cryptocurrency lots, but leaves the user in
+control of the overall transaction structure.
 
-    The program also inserts Income:CapitalGains legs where necessary when
-    reducing lots. This gives Ledger the CapitalGains explicitly, so when you
-    run TaxingLot's output back through Ledger, you may have to manually adjust
-    some transactions do to currency exchange rate losses and/or gains.
+The program requires a CSV file with exchange rates for all commodities. Modify
+the getrates() function according to your needs and your rates file.
 
-    I keep my ledger file in the actual currencies or cryptocurrencies
-    that I transact in. With this program, I can convert to USD to
-    calculate and report capital gains/losses with a USD basis for each
-    transaction. The program adds exchange rate price declarations to the
-    output. The original currencies/commodities are reported in comments
-    on the same line as the converted USD rate.
+The program also inserts Income:CapitalGains legs where necessary when reducing
+lots. This gives Ledger the CapitalGains explicitly, so when you run TaxingLot's
+output back through Ledger, you may have to manually adjust some transactions do
+to currency exchange rate losses and/or gains.
 
-    This is my first attempt at Python. Pull requests are welcome.
-    However, I may be slow to respond as I'm learning python and busy
-    with my family and my non-programming work.
+I keep my ledger file in the actual currencies or cryptocurrencies that I
+transact in. With this program, I can convert to USD to calculate and report
+capital gains/losses with a USD basis for each transaction. The program adds
+exchange rate price declarations to the output. The original currencies or
+commodities are reported in comments on the same line as the converted USD rate.
 
-    Writen by Joel Swanson. Version 0.03. Copyright 2017. Licensed under
-    the GNU General Public License (GPL) Version 3. Absolutely no warranty,
-    this program provided 'as is'. See https://www.gnu.org/licenses/gpl.html.
-'''
+This is my first attempt at Python. Pull requests are welcome. However, I may
+be slow to respond as I'm learning python and busy with my family and my
+non-programming work.
+
+Writen by Joel Swanson. Version 0.03. Copyright 2017. Licensed under
+the GNU General Public License (GPL) Version 3. Absolutely no warranty,
+this program provided 'as is'. See https://www.gnu.org/licenses/gpl.html.'''
 
 script, filename, query = argv
 
