@@ -37,9 +37,13 @@ Globably, this program:
        basis calculations, to keep the IRS happy.
         
 Note:
-    TaxingLots.py returns lot reductions using ledger's syntax, assuming USD
+    Ledger is a powerful, double-entry accounting system that is accessed
+    from the UNIX command-line. Ledger is written by John Wiegley, released
+    under the BSD license, and is available at http://ledger-cli.org.
+
+    TaxingLots.py returns lot reductions using Ledger's syntax, assuming USD
     as the reference currency for taxation purposes. It does not check that the
-    transactions are balanced, since ledger already does that. It simply manages
+    transactions are balanced, since Ledger already does that. It simply manages
     booking and reducing commodity/cryptocurrency lots, but leaves the user in
     control of the overall transaction structure.
 
@@ -47,8 +51,8 @@ Note:
     Modify the getrates() function according to your needs and your rates file.
 
     The program also inserts Income:CapitalGains legs where necessary when
-    reducing lots. This gives ledger the CapitalGains explicitly, so when you
-    run TaxingLot's output back through ledger, you may have to manually adjust
+    reducing lots. This gives Ledger the CapitalGains explicitly, so when you
+    run TaxingLot's output back through Ledger, you may have to manually adjust
     some transactions do to currency exchange rate losses and/or gains.
 
     I keep my ledger file in the actual currencies or cryptocurrencies
