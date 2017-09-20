@@ -37,11 +37,19 @@ Globably, this program:
        basis calculations, to keep the IRS happy.
         
 Note:
-    While TaxingLots.py returns lot reductions using ledger's syntax, it
-    does not currently automatically insert a "Income:Capital
-    Gains" transaction leg in its output, nor does it check that the transactions
-    are balanced. It simply manages booking and reducing commodity/cryptocurrency
-    lots, but leaves the use in control of the overall transaction structure.
+    TaxingLots.py returns lot reductions using ledger's syntax, assuming USD
+    as the reference currency for taxation purposes. It does not check that the
+    transactions are balanced, since ledger already does that. It simply manages
+    booking and reducing commodity/cryptocurrency lots, but leaves the user in
+    control of the overall transaction structure.
+
+    The program requires a CSV file with exchange rates for all commodities.
+    Modify the getrates() function according to your needs and your rates file.
+
+    The program also inserts Income:CapitalGains legs where necessary when
+    reducing lots. This gives ledger the CapitalGains explicitly, so when you
+    run TaxingLot's output back through ledger, you may have to manually adjust
+    some transactions do to currency exchange rate losses and/or gains.
 
     I keep my ledger file in the actual currencies or cryptocurrencies
     that I transact in. With this program, I can convert to USD to
@@ -66,10 +74,10 @@ def getrates(date):
 
     Its up to you to provide exchange rates. Example format for a .csv exchange rates file:
 
-date,timestamp,USDEUR,USDBTC,USDGBP,USDUAH,USDJPY,USDCHF,USDXAU,USDXAG
-2014-11-01,1414886399,0.798418,0.003085,0.625118,12.9836,112.0493,0.96211,0.000852,0.062043
-2014-11-02,1414972799,0.799102,0.003083,0.625767,12.9954,112.678001,0.96358,0.000852,0.062015
-2014-11-03,1415059199,0.800824,0.003087,0.625999,12.9917,113.544901,0.964853,0.000855,0.061872
+date,timestamp,USD/EUR,BTC/USD,USD/GBP,USD/BTC,USD/LTC
+2016-10-01,1459555199,0.88648003,0.00242703,0.70977144,420.32867,3.2825,
+2016-10-02,1459641599,0.85137191,0.00231151,0.68166168,407.08281,3.1525,
+2016-10-03,1459727999,0.91288912,0.00247936,0.7314528,436.16768,3.3904,
 
     For this example:   list[0] is date
                         list[1] is timestamp
@@ -78,15 +86,10 @@ date,timestamp,USDEUR,USDBTC,USDGBP,USDUAH,USDJPY,USDCHF,USDXAU,USDXAG
                         list[4] is USD/GBP
                         list[5] is USD/BTC
                         list[6] is USD/LTC
-                        list[7] is UAH/USD
-                        list[8] is JPY/USD
-                        list[9] is USD/CHF
-                        list[10] is USD/XAU
-                        list[11] is USD/XAG
 
-    TODO: add graceful error handling if function is given a date that's not in rates.csv.
+    TODO: add graceful error handling if function is given a date that's not in rates file.
     Currently this will generate a NoneType object error when the program is run, so verify
-    that all dates have conversion history in your rates.csv."""
+    that all dates have conversion history in your rates file."""
 
     f = open("rates-made-up.csv")
 
