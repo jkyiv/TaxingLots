@@ -39,6 +39,10 @@ Ledger is a powerful, double-entry accounting system that is accessed from the
 UNIX command-line. Ledger is written by John Wiegley, released under the BSD
 license, and is available at http://ledger-cli.org.
 
+On Debian (and I assume derivative distributions like Ubuntu or Linux Mint), in
+addition to the "ledger" package, the "python-ledger" package provides you with
+the necessary Python bindings so that TaxingLots.py can read ledger data files.
+
 TaxingLots.py returns lot reductions using Ledger's syntax, assuming USD as the
 reference currency for taxation purposes. It does not check that the
 transactions are balanced, since Ledger already does that. It simply manages
