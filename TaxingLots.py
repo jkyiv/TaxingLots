@@ -96,7 +96,7 @@ date,timestamp,USD/EUR,BTC/USD,USD/GBP,USD/BTC,USD/LTC
     Currently this will generate a NoneType object error when the program is run, so verify
     that all dates have conversion history in your rates file."""
 
-    f = open("rates-made-up.csv")
+    f = open("rates.csv")
 
     lines = []
 
