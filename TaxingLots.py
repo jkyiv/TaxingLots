@@ -21,8 +21,9 @@ Globably, this program:
  1. Reads a ledger journal 'filename' and a ledger 'query' (what
     commodity or commodities are you interested in?) as arguments,
     and returns matching posts using the python ledger bridge, which
-    must be compiled with your version of ledger. Its output defaults
-    to sdout, so it never modifies its imput files.
+    must be compiled with your version of ledger (or there's a Debian
+    package called python-ledger that provides the ledger python bridge.)
+    Its output defaults to sdout, so it never modifies its imput files.
 
  2. Creates a list "stack" of commodity lots with dates and cost basis.
     Currently it handles bitcoin (BTC), litecoin (LTC), and ether (ETH),
@@ -68,7 +69,7 @@ This is my first attempt at Python. Pull requests are welcome. However, I may
 be slow to respond as I'm learning python and busy with my family and my
 non-programming work.
 
-Writen by Joel Swanson. Version 0.03. Copyright 2017. Licensed under
+Writen by Joel Swanson. Version 0.03. Copyright 2017-2018. Licensed under
 the GNU General Public License (GPL) Version 3. Absolutely no warranty,
 this program provided 'as is'. See https://www.gnu.org/licenses/gpl.html.'''
 
@@ -77,7 +78,7 @@ script, filename, query = argv
 def getrates(date):
     """Takes date (YYYY-mm-dd), returns a list with: comma separated date, timestamp, and conversion rates.
 
-    Its up to you to provide exchange rates. Example format for a .csv exchange rates file:
+    Its up to you to provide exchange rates. Example format for a .csv exchange rates file: TODO: Update sample
 
 date,timestamp,USD/EUR,BTC/USD,USD/GBP,USD/BTC,USD/LTC
 2016-10-01,1459555199,0.88648003,0.00242703,0.70977144,420.32867,3.2825,
@@ -86,17 +87,21 @@ date,timestamp,USD/EUR,BTC/USD,USD/GBP,USD/BTC,USD/LTC
 
     For this example:   list[0] is date
                         list[1] is timestamp
-                        list[2] is USD/EUR
-                        list[3] is BTC/USD
+                        list[2] is EUR/USD     --> USD/EUR
+                        list[3] is BTC/USD     --> USD/BTC
                         list[4] is USD/GBP
-                        list[5] is USD/BTC
-                        list[6] is USD/LTC
+                        list[5] is USD/BTC     --> USD/LTC
+                        list[6] is USD/LTC     --> UAH/USD
+                        list[7] is JPY/USD
+                        list[8] is CHF/USD
+                        list[9] is XAU/USD
+                        list[10] is XAG/USD
 
     TODO: add graceful error handling if function is given a date that's not in rates file.
     Currently this will generate a NoneType object error when the program is run, so verify
     that all dates have conversion history in your rates file."""
 
-    f = open("rates-made-up.csv")
+    f = open("rates.csv")
 
     lines = []
 
@@ -126,10 +131,10 @@ def convert_to_USD(foreign):
         rate = USDLTC
         priceUSD = float(foreign[0]) * rate
     elif foreign[1] == 'GBP':
-        rate = (1/USDGBP)
+        rate = USDGBP
         priceUSD = float(foreign[0]) * rate
     elif foreign[1] == 'EUR':
-        rate = (1/USDEUR)
+        rate = USDEUR
         priceUSD = float(foreign[0]) * rate
     elif foreign[1] == 'USD':
         priceUSD = float(foreign[0])
@@ -208,6 +213,7 @@ print "comment"
 print "\nQuerying %r via the ledger bridge.\n" % filename
 
 # Use's the ledger python bridge to read from a ledger journal file.
+# The Ledger python bridge is available as a Debian package, python-ledger.
 # NOTE: ledger file must be sorted by date, via "ledger print --sort date"
 #
 # Each posting is broken into a list of strings, s.
@@ -314,16 +320,16 @@ tx_num = 0
 
 
 for i in range(len(lines)):
-    # For each date in ledger file, assigns USDEUR and USDBTC conversion rate variables
+    # For each date in ledger file, assigns USD/EUR, USD/GBP, USD/BTC, and USD/LTC conversion rate variables
     m = re.search(r'(^(\d{4}-\d{2}-\d{2}))', lines[i])
     if m:
         date = m.group(1)
-        rates = getrates(date)       # USD/EUR = rates[2], USD/GBP = rates[4], USD/BTC = rates[5], USD/LTC = rates[6]
+        rates = getrates(date)       # USD/EUR = rates[2], USD/BTC = rates[3], USD/GBP = rates[4], USD/LTC = rates[5]
         time = gettime(rates[1])     # Specific time of rate conversion = time
-        USDEUR, USDGBP, USDBTC, USDLTC = float(rates[2]), float(rates[4]), float(rates[5]), float(rates[6])
+        USDEUR, USDBTC, USDGBP, USDLTC = float(rates[2]), float(rates[3]), float(rates[4]), float(rates[5])
 
-        print "P %s EUR %.4f USD" % (date, 1/USDEUR)
-        print "P %s GBP %.4f USD" % (date, 1/USDGBP)
+        print "P %s EUR %.4f USD" % (date, USDEUR)
+        print "P %s GBP %.4f USD" % (date, USDGBP)
         print "P %s BTC %.4f USD" % (date, USDBTC)
         print "P %s LCT %.4f USD\n" % (date, USDLTC)
 
@@ -408,8 +414,8 @@ for i in range(len(lines)):
 #            print "    %s @ %.2f USD\n" % (m2.group(1), 1/USDBTC),
         elif m3:
             if m3.group(6) == 'EUR':
-                EUR_ref = convert_to_USD(m3.group(3))
-                print "    %s%.2f USD     ; Originally @ %s EUR" % (m3.group(1), EUR_ref, m3.group(4))
+                USDEUR = convert_to_USD(m3.group(3))
+                print "    %s%.2f USD     ; Originally @ %s EUR" % (m3.group(1), USDEUR, m3.group(4))
             elif m3.group(6) == 'GBP':
                 GBP_ref = convert_to_USD(m3.group(3))
                 print "    %s%.2f USD     ; @ %s GBP" % (m3.group(1), GBP_ref, m3.group(4))
