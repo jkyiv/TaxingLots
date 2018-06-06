@@ -3,7 +3,7 @@
     Assets:Checking:US           -258.02 USD
 
 2016-10-03 * Create offer fee
-    Expenses:Fees:Crypto      0.0005 BTC @ 417.50 EUR
+    Expenses:Fees:Crypto      0.0005 BTC @@ 0.20875 EUR
     Assets:Crypto:Bitcoin               -0.0005 BTC @ 417.50 EUR
     Income:CapitalGains
 

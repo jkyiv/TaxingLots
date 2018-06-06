@@ -6,8 +6,9 @@ import os
 import datetime
 import re
 import ledger
+import getrates
 
-'''Querys a journal for lots, reduces them, & returns ledger-format lot reductions to sdout.
+'''Queries a journal for lots, reduces them, & returns ledger-format lot reductions to sdout.
 
 $ python TaxingLots.py 'filename' 'query'
 
@@ -74,82 +75,29 @@ this program provided 'as is'. See https://www.gnu.org/licenses/gpl.html.'''
 
 script, filename, query = argv
 
-def getrates(date):
-    """Takes date (YYYY-mm-dd), returns a list with: comma separated date, timestamp, and conversion rates.
-
-    Its up to you to provide exchange rates. Example format for a .csv exchange rates file:
-
-date,timestamp,USDEUR,USDBTC,USDGBP,USDLTC,UAHUSD,JPYUSD,CHFUSD,XAUUSD,XAGUSD,EURBTC,BTCBTC,GBPBTC,UAHBTC,JPYBTC,CHFBTC,XAUBTC,XAGBTC, from currencylayer.com
-2018-05-16,1526515199,1.18189579888666,8343.9275,1.35470190187481,139.65,26.2099989999913,110.367995999965,1.00057007122845,0.000774452318767,0.061387354216585,7059.782688,1,6159.235097,218694.331431,920902.556944,8348.684133,6.461974,512.211633,
-2018-05-17,1526601599,1.17952191819878,8069.6688,1.351204773399,139.56,26.155001000041,110.833028726036,1.00166016974575,0.000775341114371,0.060862420524619,6841.474224,1,5972.202703,211062.195534,894385.83392,8083.06582,6.256746,491.139576,
-2018-05-18,1526653808,1.17688435714284,8069.7475,1.34707407147203,132.70,26.1100010000313,110.869003000032,0.998329815276128,0.000775193771552,0.0609570252353,6856.873788,1,5990.574439,210701.115295,894684.859787,8056.269531,6.255618,491.907802,
-
-    For this example:   list[0] is date
-                        list[1] is timestamp
-                        list[2] is USD/EUR
-                        list[3] is USD/BTC
-                        list[4] is USD/GBP
-                        list[5] is USD/LTC
-                        list[6] is UAH/USD
-                        list[7] is JPY/USD
-                        list[8] is CHF/USD
-                        list[9] is XAU/USD
-                        list[10] is XAG/USD
-
-    TODO: add graceful error handling if function is given a date that's not in rates file.
-    Currently this will generate a NoneType object error when the program is run, so verify
-    that all dates have conversion history in your rates file."""
-
-    f = open("rates.csv")
-
-    lines = []
-
-    lines = f.readlines()
-
-    for i in range(len(lines)):
-        if date in lines[i]:
-            line = lines[i].rstrip()
-            line = lines[i].split()
-            rates = list(line)
-            rates = rates[0].split(',')    
-            if rates is not None:
-                return rates
-
-def gettime(timestamp):
-    """Takes a UNIX timestame, returns UTC time in %Y-%m-%d %H:%M:% format."""
-    timeUTC = datetime.datetime.utcfromtimestamp(int(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
-    return timeUTC
-
 def convert_to_USD(foreign):
     """Converts lot pricing to USD. Takes string "{[amount] [commodity symbol], returns list of amount and rate in USD"""
     foreign = foreign.split(' ')
+    rates = getrates.getrates(date)
+    USDEUR, USDBTC, USDGBP, USDLTC, UAHUSD, JPYUSD, CHFUSD, XAUUSD, XAGUSD = float(rates[2]), float(rates[3]), float(rates[4]), float(rates[5]), float(rates[6]), float(rates[7]), float(rates[8]), float(rates[9]), float(rates[10])
     if foreign[1] == 'EUR':
-        rate = USDEUR
-        priceUSD = float(foreign[0]) * rate
+        priceUSD = float(foreign[0]) * USDEUR
     elif foreign[1] == 'BTC':
-        rate = USDBTC
-        priceUSD = float(foreign[0]) * rate
+        priceUSD = float(foreign[0]) * USDBTC
     elif foreign[1] == 'GBP':
-        rate = USDGBP
-        priceUSD = float(foreign[0]) * rate
+        priceUSD = float(foreign[0]) * USDGBP
     elif foreign[1] == 'LTC':
-        rate = USDLTC
-        priceUSD = float(foreign[0]) * rate
+        priceUSD = float(foreign[0]) * USDLTC
     elif foreign[1] == 'UAH':
-        rate = 1/UAHUSD
-        priceUSD = float(foreign[0]) * rate
+        priceUSD = float(foreign[0]) * 1/UAHUSD
     elif foreign[1] == 'JPY':
-        rate = JPYUSD
-        priceUSD = float(foreign[0]) * rate
+        priceUSD = float(foreign[0]) * JPYUSD
     elif foreign[1] == 'CHF':
-        rate = CHFUSD
-        priceUSD = float(foreign[0]) * rate
+        priceUSD = float(foreign[0]) * CHFUSD
     elif foreign[1] == 'XAU':
-        rate = XAUUSD
-        priceUSD = float(foreign[0]) * rate
+        priceUSD = float(foreign[0]) * XAUUSD
     elif foreign[1] == 'XAG':
-        rate = XAGUSD
-        priceUSD = float(foreign[0]) * rate
+        priceUSD = float(foreign[0]) * XAGUSD
     elif foreign[1] == 'USD':
         priceUSD = float(foreign[0])
     else:
@@ -330,6 +278,8 @@ f = open(filename)
 lines = []
 lines = f.readlines()
 tx_num = 0
+date = '2009-01-03'    # sample date to turn 'date'into a global variable; also the date of the Bitcoin genesis block.
+USDEUR = USDBTC = USDGBP = USDLTC = UAHUSD = JPYUSD = CHFUSD = XAUUSD = XAGUSD = 0.0
 
 
 for i in range(len(lines)):
@@ -337,19 +287,19 @@ for i in range(len(lines)):
     m = re.search(r'(^(\d{4}-\d{2}-\d{2}))', lines[i])
     if m:
         date = m.group(1)
-        rates = getrates(date)       # USD/EUR = rates[2], USD/BTC = rates[3], USD/GBP = rates[4], USD/LTC = rates[5], UAH/USD = rates[6], JPY/USD = rates[7], CHF/USD = rates[8], XAU/USD = rates[9], XAG/USD = rates[10]
-        time = gettime(rates[1])     # Specific time of rate conversion = time
+        rates = getrates.getrates(date)       # USD/EUR = rates[2], USD/BTC = rates[3], USD/GBP = rates[4], USD/LTC = rates[5], UAH/USD = rates[6], JPY/USD = rates[7], CHF/USD = rates[8], XAU/USD = rates[9], XAG/USD = rates[10]
+        time = getrates.gettime(rates[1])     # Specific time of rate conversion = time
         USDEUR, USDBTC, USDGBP, USDLTC, UAHUSD, JPYUSD, CHFUSD, XAUUSD, XAGUSD = float(rates[2]), float(rates[3]), float(rates[4]), float(rates[5]), float(rates[6]), float(rates[7]), float(rates[8]), float(rates[9]), float(rates[10])
 
-        print "P %s 1 EUR = %.4f USD" % (date, USDEUR)
-        print "P %s 1 GBP = %.4f USD" % (date, USDGBP)
-        print "P %s 1 BTC = %.4f USD" % (date, USDBTC)
-        print "P %s 1 LCT = %.4f USD" % (date, USDLTC)
-        print "P %s %.4f UAH = 1 USD" % (date, UAHUSD)
-        print "P %s %.4f JPY = 1 USD" % (date, JPYUSD)
-        print "P %s %.4f CHF = 1 USD" % (date, CHFUSD)
-        print "P %s 1 oz XAU = %.4f USD" % (date, 1/XAUUSD)
-        print "P %s 1 oz XAG = %.4f USD\n" % (date, 1/XAGUSD)
+        print "P %s EUR %.4f USD" % (date, USDEUR)
+        print "P %s GBP %.4f USD" % (date, USDGBP)
+        print "P %s BTC %.4f USD" % (date, USDBTC)
+        print "P %s LCT %.4f USD\n" % (date, USDLTC)
+        print "P %s USD %.4f UAH" % (date, UAHUSD)
+        print "P %s USD %.4f JPY" % (date, JPYUSD)
+        print "P %s USD %.4f CHF" % (date, CHFUSD)
+        print "P %s XAU %.4f USD" % (date, 1/XAUUSD)
+        print "P %s XAG %.4f USD\n" % (date, 1/XAGUSD)
                 
         tx_num = tx_num + 1
 
