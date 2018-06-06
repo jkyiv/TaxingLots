@@ -295,11 +295,11 @@ for i in range(len(lines)):
         print "P %s GBP %.4f USD" % (date, USDGBP)
         print "P %s BTC %.4f USD" % (date, USDBTC)
         print "P %s LCT %.4f USD\n" % (date, USDLTC)
-        print "P %s USD %.4f UAH" % (date, UAHUSD)
-        print "P %s USD %.4f JPY" % (date, JPYUSD)
-        print "P %s USD %.4f CHF" % (date, CHFUSD)
-        print "P %s XAU %.4f USD" % (date, 1/XAUUSD)
-        print "P %s XAG %.4f USD\n" % (date, 1/XAGUSD)
+#        print "P %s USD %.4f UAH" % (date, UAHUSD)
+#        print "P %s USD %.4f JPY" % (date, JPYUSD)
+#        print "P %s USD %.4f CHF" % (date, CHFUSD)
+#        print "P %s XAU %.4f USD" % (date, 1/XAUUSD)
+#        print "P %s XAG %.4f USD\n" % (date, 1/XAGUSD)
                 
         tx_num = tx_num + 1
 

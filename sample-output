@@ -44,31 +44,31 @@ reduce_stack[15] 2016-12-24 -0.61 BTC 909.327868852 EUR
 reduce_stack[16] 2016-12-26 -2.6 BTC 934.60 EUR
 end comment
 
-P 2016-10-01 EUR 1.1281 USD
-P 2016-10-01 GBP 1.4089 USD
-P 2016-10-01 BTC 420.3287 USD
-P 2016-10-01 LCT 3.2825 USD
+P 2016-10-01 EUR 1.1245 USD
+P 2016-10-01 GBP 1.2979 USD
+P 2016-10-01 BTC 613.8125 USD
+P 2016-10-01 LCT 3.8500 USD
 
 2016-10-01 bitcoin purchase           ; Transaction No. 1
     Assets:Crypto:Bitcoin               0.53443347 BTC @ 482.79 USD
     Assets:Checking:US           -258.02 USD
 
-P 2016-10-03 EUR 1.0954 USD
-P 2016-10-03 GBP 1.3671 USD
-P 2016-10-03 BTC 436.1677 USD
-P 2016-10-03 LCT 3.3904 USD
+P 2016-10-03 EUR 1.1212 USD
+P 2016-10-03 GBP 1.2850 USD
+P 2016-10-03 BTC 612.3088 USD
+P 2016-10-03 LCT 3.8500 USD
 
 2016-10-03 * Create offer fee           ; Transaction No. 2
-    Expenses:Fees:Crypto      0.0005 BTC @ 457.34 USD     ; Originally @ 417.50 EUR
-    Assets:Crypto:Bitcoin    -0.0005 BTC {482.79 USD} [2016-10-01] @ 457.34 USD
+    Expenses:Fees:Crypto      0.0005 BTC @@ 0.23 USD     ; Originally @ 0.20875 EUR
+    Assets:Crypto:Bitcoin    -0.0005 BTC {482.79 USD} [2016-10-01] @ 468.10 USD
     ; Reduction price converted from @ 417.50 EUR
     ; Lot size remaining: 0.53443347 BTC - 0.0005 BTC (reduction) = 0.53393347 BTC
     Income:CapitalGains          0.01 USD
 
-P 2016-10-06 EUR 1.1749 USD
-P 2016-10-06 GBP 1.4563 USD
-P 2016-10-06 BTC 409.4108 USD
-P 2016-10-06 LCT 3.1622 USD
+P 2016-10-06 EUR 1.1143 USD
+P 2016-10-06 GBP 1.2406 USD
+P 2016-10-06 BTC 610.8775 USD
+P 2016-10-06 LCT 3.8500 USD
 
 2016-10-06 * bitcoin purchase           ; Transaction No. 3
     Expenses:Fees:Fiat                  3.99 USD
@@ -77,42 +77,42 @@ P 2016-10-06 LCT 3.1622 USD
 
 P 2016-01-05 GBP 1.4677390947 USD
 
-P 2016-10-08 EUR 1.1874 USD
-P 2016-10-08 GBP 1.4714 USD
-P 2016-10-08 BTC 402.4483 USD
-P 2016-10-08 LCT 3.1104 USD
+P 2016-10-08 EUR 1.1206 USD
+P 2016-10-08 GBP 1.2438 USD
+P 2016-10-08 BTC 616.4663 USD
+P 2016-10-08 LCT 3.8600 USD
 
 2016-10-08 * bitcoin purchase           ; Transaction No. 4
-    Expenses:Fees:Fiat                  2.00 USD     ; @ 1.36 GBP
-    Assets:Crypto:Bitcoin              0.375 BTC @ 533.25 USD     ; @ 362.41 GBP
-    Assets:Checking:UK           -201.96 USD     ; @ -137.26 GBP
+    Expenses:Fees:Fiat                  1.69 USD     ; @ 1.36 GBP
+    Assets:Crypto:Bitcoin              0.375 BTC @ 450.78 USD     ; @ 362.41 GBP
+    Assets:Checking:UK           -170.73 USD     ; @ -137.26 GBP
 
-P 2016-10-11 EUR 1.0865 USD
-P 2016-10-11 GBP 1.3552 USD
-P 2016-10-11 BTC 443.7353 USD
-P 2016-10-11 LCT 3.3915 USD
+P 2016-10-11 EUR 1.1063 USD
+P 2016-10-11 GBP 1.2288 USD
+P 2016-10-11 BTC 639.5088 USD
+P 2016-10-11 LCT 3.8000 USD
 
 2016-10-11 * bitcoin purchase           ; Transaction No. 5
     Expenses:Fees:Fiat                  0.40 USD
     Assets:Crypto:Bitcoin               0.073762 BTC @ 541.20 USD
     Assets:Checking:US            -40.32 USD
 
-P 2016-10-13 EUR 1.0951 USD
-P 2016-10-13 GBP 1.3790 USD
-P 2016-10-13 BTC 437.4101 USD
-P 2016-10-13 LCT 3.3578 USD
+P 2016-10-13 EUR 1.1050 USD
+P 2016-10-13 GBP 1.2222 USD
+P 2016-10-13 BTC 635.0150 USD
+P 2016-10-13 LCT 3.7500 USD
 
 2016-10-13 * Create offer fee           ; Transaction No. 6
-    Expenses:Fees:Crypto      0.0005 BTC @ 531.10 USD     ; Originally @ 485.00 EUR
-    Assets:Crypto:Bitcoin    -0.0005 BTC {482.79 USD} [2016-10-01] @ 531.10 USD
+    Expenses:Fees:Crypto      0.0005 BTC @ 535.92 USD     ; Originally @ 485.00 EUR
+    Assets:Crypto:Bitcoin    -0.0005 BTC {482.79 USD} [2016-10-01] @ 535.92 USD
     ; Reduction price converted from @ 485.00 EUR
     ; Lot size remaining: 0.53393347 BTC - 0.0005 BTC (reduction) = 0.53343347 BTC
-    Income:CapitalGains          -0.02 USD
+    Income:CapitalGains          -0.03 USD
 
-P 2016-10-13 EUR 1.0951 USD
-P 2016-10-13 GBP 1.3790 USD
-P 2016-10-13 BTC 437.4101 USD
-P 2016-10-13 LCT 3.3578 USD
+P 2016-10-13 EUR 1.1050 USD
+P 2016-10-13 GBP 1.2222 USD
+P 2016-10-13 BTC 635.0150 USD
+P 2016-10-13 LCT 3.7500 USD
 
 2016-10-13 * Network fee           ; Transaction No. 7
     Expenses:Fees:Crypto:Network        0.0002 BTC @ 563.44 USD
@@ -120,20 +120,20 @@ P 2016-10-13 LCT 3.3578 USD
     ; Lot size remaining: 0.53343347 BTC - 0.0002 BTC (reduction) = 0.53323347 BTC
     Income:CapitalGains          -0.02 USD
 
-P 2016-10-19 EUR 1.1114 USD
-P 2016-10-19 GBP 1.4264 USD
-P 2016-10-19 BTC 451.8589 USD
-P 2016-10-19 LCT 3.3835 USD
+P 2016-10-19 EUR 1.0978 USD
+P 2016-10-19 GBP 1.2290 USD
+P 2016-10-19 BTC 628.1063 USD
+P 2016-10-19 LCT 3.8500 USD
 
 2016-10-19 * bitcoin purchase           ; Transaction No. 8
     Expenses:Fees:Fiat                  4.88 USD
     Assets:Crypto:Bitcoin               0.8 BTC @ 610.5 USD
     Assets:Checking:US           -493.28 USD
 
-P 2016-10-22 EUR 1.1498 USD
-P 2016-10-22 GBP 1.4776 USD
-P 2016-10-22 BTC 456.7270 USD
-P 2016-10-22 LCT 3.5476 USD
+P 2016-10-22 EUR 1.0887 USD
+P 2016-10-22 GBP 1.2236 USD
+P 2016-10-22 BTC 652.4713 USD
+P 2016-10-22 LCT 3.8100 USD
 
 2016-10-22 * Take offer fee           ; Transaction No. 9
     Expenses:Fees:Crypto      0.001 BTC @ 563.44 USD
@@ -141,266 +141,266 @@ P 2016-10-22 LCT 3.5476 USD
     ; Lot size remaining: 0.53323347 BTC - 0.001 BTC (reduction) = 0.53223347 BTC
     Income:CapitalGains          -0.08 USD
 
-P 2016-10-22 EUR 1.1498 USD
-P 2016-10-22 GBP 1.4776 USD
-P 2016-10-22 BTC 456.7270 USD
-P 2016-10-22 LCT 3.5476 USD
+P 2016-10-22 EUR 1.0887 USD
+P 2016-10-22 GBP 1.2236 USD
+P 2016-10-22 BTC 652.4713 USD
+P 2016-10-22 LCT 3.8100 USD
 
 2016-10-22 * Network fee           ; Transaction No. 10
-    Expenses:Fees:Crypto:Network        0.0002 BTC @ 557.63 USD     ; Originally @ 485.00 EUR
-    Assets:Crypto:Bitcoin    -0.0002 BTC {482.79 USD} [2016-10-01] @ 557.63 USD
+    Expenses:Fees:Crypto:Network        0.0002 BTC @ 528.03 USD     ; Originally @ 485.00 EUR
+    Assets:Crypto:Bitcoin    -0.0002 BTC {482.79 USD} [2016-10-01] @ 528.03 USD
     ; Reduction price converted from @ 485.00 EUR
     ; Lot size remaining: 0.53223347 BTC - 0.0002 BTC (reduction) = 0.53203347 BTC
     Income:CapitalGains          -0.01 USD
 
-P 2016-10-26 EUR 1.1926 USD
-P 2016-10-26 GBP 1.5220 USD
-P 2016-10-26 BTC 436.7194 USD
-P 2016-10-26 LCT 3.6384 USD
+P 2016-10-26 EUR 1.0912 USD
+P 2016-10-26 GBP 1.2236 USD
+P 2016-10-26 BTC 674.4513 USD
+P 2016-10-26 LCT 3.9100 USD
 
 2016-10-26 * bitcoin sale           ; Transaction No. 11
-    Assets:Checking:EU                   433.82 USD     ; Originally @ 363.75 EUR
-    Assets:Crypto:Bitcoin    -0.53203347 BTC {482.79 USD} [2016-10-01] (lot cleared) @ 578.43 USD
+    Assets:Checking:EU                   396.93 USD     ; Originally @ 363.75 EUR
+    Assets:Crypto:Bitcoin    -0.53203347 BTC {482.79 USD} [2016-10-01] (lot cleared) @ 529.25 USD
     ; Reduction price converted from @ 485.00 EUR
     ; Lot size remaining: 0.53203347 BTC - 0.75 BTC (reduction) = -0.21796653 BTC
-    Income:CapitalGains          -50.88 USD
-    Assets:Crypto:Bitcoin    -0.21796653 BTC {531.93 USD} [2016-10-06] @ 578.43 USD
+    Income:CapitalGains          -24.72 USD
+    Assets:Crypto:Bitcoin    -0.21796653 BTC {531.93 USD} [2016-10-06] @ 529.25 USD
     ; Reduction price converted from @ 485.00 EUR
     ; Lot size remaining: 0.75 BTC - 0.21796653 BTC (reduction) = 0.53203347 BTC
-    Income:CapitalGains          -10.13 USD
+    Income:CapitalGains          0.59 USD
 
-P 2016-11-01 EUR 1.1606 USD
-P 2016-11-01 GBP 1.4742 USD
-P 2016-11-01 BTC 441.8546 USD
-P 2016-11-01 LCT 3.9788 USD
+P 2016-11-01 EUR 1.1059 USD
+P 2016-11-01 GBP 1.2238 USD
+P 2016-11-01 BTC 728.9050 USD
+P 2016-11-01 LCT 4.0000 USD
 
 2016-11-01 * bitcoin purchase           ; Transaction No. 12
     Assets:Crypto:Bitcoin              1.2 BTC
-    Assets:Checking:EU                -766.03 USD     ; Originally @ -660 EUR
+    Assets:Checking:EU                -729.92 USD     ; Originally @ -660 EUR
 
-P 2016-11-04 EUR 1.0978 USD
-P 2016-11-04 GBP 1.3941 USD
-P 2016-11-04 BTC 469.5410 USD
-P 2016-11-04 LCT 3.9758 USD
+P 2016-11-04 EUR 1.1149 USD
+P 2016-11-04 GBP 1.2518 USD
+P 2016-11-04 BTC 702.1263 USD
+P 2016-11-04 LCT 3.8600 USD
 
 2016-11-04 * bitcoin purchase           ; Transaction No. 13
     Expenses:Fees:Fiat                  3.75 USD
     Assets:Crypto:Bitcoin               0.7 BTC @ 535.25 USD
     Assets:Checking:US           -378.43 USD
 
-P 2016-11-07 EUR 1.1428 USD
-P 2016-11-07 GBP 1.4543 USD
-P 2016-11-07 BTC 449.9105 USD
-P 2016-11-07 LCT 4.0194 USD
+P 2016-11-07 EUR 1.1051 USD
+P 2016-11-07 GBP 1.2395 USD
+P 2016-11-07 BTC 704.0663 USD
+P 2016-11-07 LCT 3.8900 USD
 
 2016-11-07 * ether purchase           ; Transaction No. 14
     Assets:Crypto:Ether                 43.53 ETH
-    Assets:Crypto:Bitcoin    -0.53203347 BTC {531.93 USD} [2016-10-06] (lot cleared) @ 449.91 USD
+    Assets:Crypto:Bitcoin    -0.53203347 BTC {531.93 USD} [2016-10-06] (lot cleared) @ 704.07 USD
     ; Reduction price converted from @ 1.00000000 BTC
     ; Lot size remaining: 0.53203347 BTC - 1.0 BTC (reduction) = -0.46796653 BTC
-    Income:CapitalGains          43.64 USD
-    Assets:Crypto:Bitcoin    -0.375 BTC {527.05 USD} [2016-10-08] (lot cleared) @ 449.91 USD
+    Income:CapitalGains          -91.58 USD
+    Assets:Crypto:Bitcoin    -0.375 BTC {449.22 USD} [2016-10-08] (lot cleared) @ 704.07 USD
     ; Reduction price converted from @ 1.00000000 BTC
     ; Lot size remaining: 0.375 BTC - 0.46796653 BTC (reduction) = -0.09296653 BTC
-    Income:CapitalGains          28.93 USD
-    Assets:Crypto:Bitcoin    -0.073762 BTC {541.20 USD} [2016-10-11] (lot cleared) @ 449.91 USD
+    Income:CapitalGains          -95.57 USD
+    Assets:Crypto:Bitcoin    -0.073762 BTC {541.20 USD} [2016-10-11] (lot cleared) @ 704.07 USD
     ; Reduction price converted from @ 1.00000000 BTC
     ; Lot size remaining: 0.073762 BTC - 0.09296653 BTC (reduction) = -0.01920453 BTC
-    Income:CapitalGains          6.73 USD
-    Assets:Crypto:Bitcoin    -0.01920453 BTC {610.50 USD} [2016-10-19] @ 449.91 USD
+    Income:CapitalGains          -12.01 USD
+    Assets:Crypto:Bitcoin    -0.01920453 BTC {610.50 USD} [2016-10-19] @ 704.07 USD
     ; Reduction price converted from @ 1.00000000 BTC
     ; Lot size remaining: 0.8 BTC - 0.01920453 BTC (reduction) = 0.78079547 BTC
-    Income:CapitalGains          3.08 USD
+    Income:CapitalGains          -1.80 USD
 
-P 2016-11-10 EUR 1.0569 USD
-P 2016-11-10 GBP 1.3721 USD
-P 2016-11-10 BTC 468.9122 USD
-P 2016-11-10 LCT 4.2400 USD
+P 2016-11-10 EUR 1.0892 USD
+P 2016-11-10 GBP 1.2559 USD
+P 2016-11-10 BTC 713.6975 USD
+P 2016-11-10 LCT 3.8600 USD
 
 2016-11-10 * ether sale           ; Transaction No. 15
     Assets:Crypto:Bitcoin               1.03772175 BTC
-    Assets:Crypto:Ether    -42.52958 ETH {10.77 USD} [2016-11-07] @ 11.44 USD
+    Assets:Crypto:Ether    -42.52958 ETH {16.40 USD} [2016-11-07] @ 17.41 USD
     ; Reduction price converted from @ 0.02440000 BTC
     ; Lot size remaining: 43.53 ETH - 42.52958 ETH (reduction) = 1.00042 ETH
-    Income:CapitalGains          -28.46 USD
+    Income:CapitalGains          -43.32 USD
 
-P 2016-11-13 EUR 1.1686 USD
-P 2016-11-13 GBP 1.5100 USD
-P 2016-11-13 BTC 421.6954 USD
-P 2016-11-13 LCT 3.8016 USD
+P 2016-11-13 EUR 1.0828 USD
+P 2016-11-13 GBP 1.2570 USD
+P 2016-11-13 BTC 702.3775 USD
+P 2016-11-13 LCT 3.7700 USD
 
 2016-11-13 * ether purchase           ; Transaction No. 16
-    Assets:Crypto:Ether                 43.41932 ETH @ 10.08 USD     ; Originally @ 0.02390 BTC
-    Assets:Crypto:Bitcoin    -0.78079547 BTC {610.50 USD} [2016-10-19] (lot cleared) @ 421.70 USD
+    Assets:Crypto:Ether                 43.41932 ETH @ 16.79 USD     ; Originally @ 0.02390 BTC
+    Assets:Crypto:Bitcoin    -0.78079547 BTC {610.50 USD} [2016-10-19] (lot cleared) @ 702.38 USD
     ; Reduction price converted from @ 1.00000000 BTC
     ; Lot size remaining: 0.78079547 BTC - 1.03772175 BTC (reduction) = -0.25692628 BTC
-    Income:CapitalGains          147.42 USD
-    Assets:Crypto:Bitcoin    -0.25692628 BTC {642.73 USD} [2016-11-01] @ 421.70 USD
+    Income:CapitalGains          -71.74 USD
+    Assets:Crypto:Bitcoin    -0.25692628 BTC {595.56 USD} [2016-11-01] @ 702.38 USD
     ; Reduction price converted from @ 1.00000000 BTC
     ; Lot size remaining: 1.2 BTC - 0.25692628 BTC (reduction) = 0.94307372 BTC
-    Income:CapitalGains          56.79 USD
+    Income:CapitalGains          -27.44 USD
     
-P 2016-11-16 EUR 1.0625 USD
-P 2016-11-16 GBP 1.4000 USD
-P 2016-11-16 BTC 471.7115 USD
-P 2016-11-16 LCT 4.1475 USD
+P 2016-11-16 EUR 1.0706 USD
+P 2016-11-16 GBP 1.2442 USD
+P 2016-11-16 BTC 741.9513 USD
+P 2016-11-16 LCT 3.9000 USD
 
 2016-11-16 * ether sale           ; Transaction No. 17
-    Assets:Crypto:Ether    -1.00042 ETH {10.84 USD} [2016-11-07] (lot cleared) @ 11.22 USD
+    Assets:Crypto:Ether    -1.00042 ETH {17.04 USD} [2016-11-07] (lot cleared) @ 17.64 USD
     ; Reduction price converted from @ 0.023781754 BTC
     ; Lot size remaining: 1.00042 ETH - 43.41932 ETH (reduction) = -42.4189 ETH
-    Income:CapitalGains          -0.38 USD
-    Assets:Crypto:Ether    -42.4189 ETH {11.27 USD} [2016-11-13] @ 11.22 USD
+    Income:CapitalGains          -0.60 USD
+    Assets:Crypto:Ether    -42.4189 ETH {17.73 USD} [2016-11-13] @ 17.64 USD
     ; Reduction price converted from @ 0.023781754 BTC
     ; Lot size remaining: 43.41932 ETH - 42.4189 ETH (reduction) = 1.00042 ETH
-    Income:CapitalGains          2.37 USD
+    Income:CapitalGains          3.72 USD
     Assets:Crypto:Bitcoin               1.03258758 BTC
 
-P 2016-11-20 EUR 1.1496 USD
-P 2016-11-20 GBP 1.4861 USD
-P 2016-11-20 BTC 524.8243 USD
-P 2016-11-20 LCT 4.5978 USD
+P 2016-11-20 EUR 1.0584 USD
+P 2016-11-20 GBP 1.2323 USD
+P 2016-11-20 BTC 728.5275 USD
+P 2016-11-20 LCT 3.9700 USD
 
 2016-11-20 * litecoin purchase           ; Transaction No. 18
-    Assets:Crypto:Litecoin               10.00 LTC @ 132 USD     ; Originally @ 0.025 BTC
-    Assets:Crypto:Bitcoin    -0.25 BTC {632.30 USD} [2016-11-01] @ 524.82 USD
+    Assets:Crypto:Litecoin               10.00 LTC @ 182 USD     ; Originally @ 0.025 BTC
+    Assets:Crypto:Bitcoin    -0.25 BTC {582.13 USD} [2016-11-01] @ 728.53 USD
     ; Reduction price converted from @ 1.00000000 BTC
     ; Lot size remaining: 0.94307372 BTC - 0.25 BTC (reduction) = 0.69307372 BTC
-    Income:CapitalGains          26.87 USD
+    Income:CapitalGains          -36.60 USD
 
-P 2016-11-24 EUR 1.1244 USD
-P 2016-11-24 GBP 1.4308 USD
-P 2016-11-24 BTC 589.7340 USD
-P 2016-11-24 LCT 4.8581 USD
+P 2016-11-24 EUR 1.0562 USD
+P 2016-11-24 GBP 1.2452 USD
+P 2016-11-24 BTC 736.3713 USD
+P 2016-11-24 LCT 3.9300 USD
 
 2016-11-24 * ether purchase           ; Transaction No. 19
-    Assets:Crypto:Ether                 43.355284 ETH @ 14.05 USD     ; Originally @ 0.02381687962187031227842954505845239071666559 BTC
-    Assets:Crypto:Bitcoin    -0.69307372 BTC {618.42 USD} [2016-11-01] (lot cleared) @ 589.73 USD
+    Assets:Crypto:Ether                 43.355284 ETH @ 17.54 USD     ; Originally @ 0.02381687962187031227842954505845239071666559 BTC
+    Assets:Crypto:Bitcoin    -0.69307372 BTC {580.91 USD} [2016-11-01] (lot cleared) @ 736.37 USD
     ; Reduction price converted from @ 1.00000000 BTC
     ; Lot size remaining: 0.69307372 BTC - 1.03258758 BTC (reduction) = -0.33951386 BTC
-    Income:CapitalGains          19.88 USD
-    Assets:Crypto:Bitcoin    -0.33951386 BTC {535.25 USD} [2016-11-04] @ 589.73 USD
+    Income:CapitalGains          -107.75 USD
+    Assets:Crypto:Bitcoin    -0.33951386 BTC {535.25 USD} [2016-11-04] @ 736.37 USD
     ; Reduction price converted from @ 1.00000000 BTC
     ; Lot size remaining: 0.7 BTC - 0.33951386 BTC (reduction) = 0.36048614 BTC
-    Income:CapitalGains          -18.50 USD
+    Income:CapitalGains          -68.28 USD
 
-P 2016-11-27 EUR 1.1548 USD
-P 2016-11-27 GBP 1.4758 USD
-P 2016-11-27 BTC 565.8657 USD
-P 2016-11-27 LCT 4.6844 USD
+P 2016-11-27 EUR 1.0612 USD
+P 2016-11-27 GBP 1.2481 USD
+P 2016-11-27 BTC 728.2663 USD
+P 2016-11-27 LCT 3.9100 USD
 
 2016-11-27 * ether sale           ; Transaction No. 20
-    Assets:Crypto:Ether    -1.00042 ETH {13.52 USD} [2016-11-13] (lot cleared) @ 13.75 USD
+    Assets:Crypto:Ether    -1.00042 ETH {17.41 USD} [2016-11-13] (lot cleared) @ 17.70 USD
     ; Reduction price converted from @ 0.02430000 BTC
     ; Lot size remaining: 1.00042 ETH - 43.355284 ETH (reduction) = -42.354864 ETH
-    Income:CapitalGains          -0.23 USD
-    Assets:Crypto:Ether    -42.354864 ETH {13.48 USD} [2016-11-24] @ 13.75 USD
+    Income:CapitalGains          -0.29 USD
+    Assets:Crypto:Ether    -42.354864 ETH {17.35 USD} [2016-11-24] @ 17.70 USD
     ; Reduction price converted from @ 0.02430000 BTC
     ; Lot size remaining: 43.355284 ETH - 42.354864 ETH (reduction) = 1.00042 ETH
-    Income:CapitalGains          -11.58 USD
+    Income:CapitalGains          -14.90 USD
     Assets:Crypto:Bitcoin               1.05353340 BTC 
 
-P 2016-12-02 EUR 1.0283 USD
-P 2016-12-02 GBP 1.2946 USD
-P 2016-12-02 BTC 746.9955 USD
-P 2016-12-02 LCT 5.7879 USD
+P 2016-12-02 EUR 1.0667 USD
+P 2016-12-02 GBP 1.2729 USD
+P 2016-12-02 BTC 771.3088 USD
+P 2016-12-02 LCT 3.9200 USD
 
 2016-12-02 * bitcoin purchase           ; Transaction No. 21
     Expenses:Fees:Fiat                  4.88 USD
     Assets:Crypto:Bitcoin               0.8 BTC @ 610.5 USD
     Assets:Checking:US           -493.28 USD
 
-P 2016-12-05 EUR 1.2125 USD
-P 2016-12-05 GBP 1.5439 USD
-P 2016-12-05 BTC 692.2055 USD
-P 2016-12-05 LCT 5.2731 USD
+P 2016-12-05 EUR 1.0757 USD
+P 2016-12-05 GBP 1.2727 USD
+P 2016-12-05 BTC 750.7675 USD
+P 2016-12-05 LCT 3.8800 USD
 
 2016-12-05 * bitcoin purchase           ; Transaction No. 22
     Expenses:Fees:Fiat                  7.94 USD
     Assets:Crypto:Bitcoin               1.3 BTC @ 610.5 USD
     Assets:Checking:US           -801.59 USD
 
-P 2016-12-07 EUR 1.1893 USD
-P 2016-12-07 GBP 1.5229 USD
-P 2016-12-07 BTC 724.8832 USD
-P 2016-12-07 LCT 5.2820 USD
+P 2016-12-07 EUR 1.0762 USD
+P 2016-12-07 GBP 1.2628 USD
+P 2016-12-07 BTC 763.9775 USD
+P 2016-12-07 LCT 3.5400 USD
 
 2016-12-07 * litecoin sale           ; Transaction No. 23
-    Assets:Crypto:Litecoin    -3.375 LTC {18.12 USD} [2016-11-20] @ 46.39 USD
+    Assets:Crypto:Litecoin    -3.375 LTC {19.10 USD} [2016-11-20] @ 48.89 USD
     ; Reduction price converted from @ 0.06400000 BTC
     ; Lot size remaining: 10.0 LTC - 3.375 LTC (reduction) = 6.625 LTC
-    Income:CapitalGains          -95.41 USD
+    Income:CapitalGains          -100.56 USD
     Assets:Crypto:Bitcoin              0.216 BTC
     
-P 2016-12-14 EUR 1.0697 USD
-P 2016-12-14 GBP 1.2935 USD
-P 2016-12-14 BTC 663.5814 USD
-P 2016-12-14 LCT 4.2640 USD
+P 2016-12-14 EUR 1.0516 USD
+P 2016-12-14 GBP 1.2536 USD
+P 2016-12-14 BTC 776.6338 USD
+P 2016-12-14 LCT 3.6600 USD
 
 2016-12-14 * bitcoin purchase           ; Transaction No. 24
     Assets:Crypto:Bitcoin        1.0000 BTC
     Assets:Checking:US          -872.92 USD
 
-P 2016-12-17 EUR 1.1483 USD
-P 2016-12-17 GBP 1.3685 USD
-P 2016-12-17 BTC 679.6324 USD
-P 2016-12-17 LCT 4.1516 USD
+P 2016-12-17 EUR 1.0454 USD
+P 2016-12-17 GBP 1.2488 USD
+P 2016-12-17 BTC 788.5113 USD
+P 2016-12-17 LCT 3.6300 USD
 
 2016-12-17 * bitcoin sale           ; Transaction No. 25
-    Assets:Crypto:Bitcoin    -0.36048614 BTC {535.25 USD} [2016-11-04] (lot cleared) @ 967.24 USD
+    Assets:Crypto:Bitcoin    -0.36048614 BTC {535.25 USD} [2016-11-04] (lot cleared) @ 880.55 USD
     ; Reduction price converted from @ 842.34 EUR
     ; Lot size remaining: 0.36048614 BTC - 0.5 BTC (reduction) = -0.13951386 BTC
-    Income:CapitalGains          -155.73 USD
-    Assets:Crypto:Bitcoin    -0.13951386 BTC {610.50 USD} [2016-12-02] @ 967.24 USD
+    Income:CapitalGains          -124.48 USD
+    Assets:Crypto:Bitcoin    -0.13951386 BTC {610.50 USD} [2016-12-02] @ 880.55 USD
     ; Reduction price converted from @ 842.34 EUR
     ; Lot size remaining: 0.8 BTC - 0.13951386 BTC (reduction) = 0.66048614 BTC
-    Income:CapitalGains          -49.77 USD
-    Assets:Checking:EU     483.62 USD     ; Originally @ 421.17 EUR
+    Income:CapitalGains          -37.68 USD
+    Assets:Checking:EU     440.28 USD     ; Originally @ 421.17 EUR
 
-P 2016-12-20 EUR 1.0540 USD
-P 2016-12-20 GBP 1.2394 USD
-P 2016-12-20 BTC 701.1869 USD
-P 2016-12-20 LCT 4.7880 USD
+P 2016-12-20 EUR 1.0393 USD
+P 2016-12-20 GBP 1.2364 USD
+P 2016-12-20 BTC 799.2925 USD
+P 2016-12-20 LCT 3.6600 USD
 
 2016-12-20 * bitcoin purchase           ; Transaction No. 26
     Assets:Crypto:Bitcoin        0.3400 BTC
     Assets:Checking:US          -295.80 USD
 
-P 2016-12-24 EUR 1.0731 USD
-P 2016-12-24 GBP 1.2574 USD
-P 2016-12-24 BTC 671.9638 USD
-P 2016-12-24 LCT 4.3672 USD
+P 2016-12-24 EUR 1.0455 USD
+P 2016-12-24 GBP 1.2285 USD
+P 2016-12-24 BTC 894.2625 USD
+P 2016-12-24 LCT 4.6500 USD
 
 2016-12-24 * bitcoin sale           ; Transaction No. 27
-    Assets:Crypto:Bitcoin    -0.61 BTC {610.50 USD} [2016-12-02] @ 975.84 USD
+    Assets:Crypto:Bitcoin    -0.61 BTC {610.50 USD} [2016-12-02] @ 950.68 USD
     ; Reduction price converted from @ 909.327868852 EUR
     ; Lot size remaining: 0.66048614 BTC - 0.61 BTC (reduction) = 0.05048614 BTC
-    Income:CapitalGains          -222.86 USD
-    Assets:Checking:EU     595.26 USD     ; Originally @ 554.69 EUR
+    Income:CapitalGains          -207.51 USD
+    Assets:Checking:EU     579.91 USD     ; Originally @ 554.69 EUR
 
-P 2016-12-26 EUR 1.1405 USD
-P 2016-12-26 GBP 1.3394 USD
-P 2016-12-26 BTC 628.7055 USD
-P 2016-12-26 LCT 3.9964 USD
+P 2016-12-26 EUR 1.0457 USD
+P 2016-12-26 GBP 1.2276 USD
+P 2016-12-26 BTC 901.9338 USD
+P 2016-12-26 LCT 4.3500 USD
 
 2016-12-26 Boxing day bitcoin sale           ; Transaction No. 28
-    Assets:Checking:EU      2771.30 USD     ; Originally @ 2429.96 EUR
-    Assets:Crypto:Bitcoin    -0.05048614 BTC {610.50 USD} [2016-12-02] (lot cleared) @ 1065.88 USD
+    Assets:Checking:EU      2541.00 USD     ; Originally @ 2429.96 EUR
+    Assets:Crypto:Bitcoin    -0.05048614 BTC {610.50 USD} [2016-12-02] (lot cleared) @ 977.31 USD
     ; Reduction price converted from @ 934.60 EUR
     ; Lot size remaining: 0.05048614 BTC - 2.6 BTC (reduction) = -2.54951386 BTC
-    Income:CapitalGains          -22.99 USD
-    Assets:Crypto:Bitcoin    -1.3 BTC {610.50 USD} [2016-12-05] (lot cleared) @ 1065.88 USD
+    Income:CapitalGains          -18.52 USD
+    Assets:Crypto:Bitcoin    -1.3 BTC {610.50 USD} [2016-12-05] (lot cleared) @ 977.31 USD
     ; Reduction price converted from @ 934.60 EUR
     ; Lot size remaining: 1.3 BTC - 2.54951386 BTC (reduction) = -1.24951386 BTC
-    Income:CapitalGains          -592.00 USD
-    Assets:Crypto:Bitcoin    -1.0 BTC {872.92 USD} [2016-12-14] (lot cleared) @ 1065.88 USD
+    Income:CapitalGains          -476.85 USD
+    Assets:Crypto:Bitcoin    -1.0 BTC {872.92 USD} [2016-12-14] (lot cleared) @ 977.31 USD
     ; Reduction price converted from @ 934.60 EUR
     ; Lot size remaining: 1.0 BTC - 1.24951386 BTC (reduction) = -0.24951386 BTC
-    Income:CapitalGains          -192.96 USD
-    Assets:Crypto:Bitcoin    -0.24951386 BTC {870.00 USD} [2016-12-20] @ 1065.88 USD
+    Income:CapitalGains          -104.39 USD
+    Assets:Crypto:Bitcoin    -0.24951386 BTC {870.00 USD} [2016-12-20] @ 977.31 USD
     ; Reduction price converted from @ 934.60 EUR
     ; Lot size remaining: 0.34 BTC - 0.24951386 BTC (reduction) = 0.09048614 BTC
-    Income:CapitalGains          -48.88 USD
+    Income:CapitalGains          -26.77 USD
 
 comment
 
@@ -419,6 +419,6 @@ Total holdings: 6.625 LTC
 Reductions to be applied:
     All lots have been reduced.
 
-Capital gains: -1165.18 USD.
+Capital gains: -1689.17 USD.
 end comment
 
