@@ -56,7 +56,7 @@ the getrates() function according to your needs and your rates file.
 
 The program also inserts Income:CapitalGains legs where necessary when reducing
 lots. This gives Ledger the CapitalGains explicitly, so when you run TaxingLot's
-output back through Ledger, you may have to manually adjust some transactions do
+output back through Ledger, you may have to manually adjust some transactions due
 to currency exchange rate losses and/or gains.
 
 I keep my ledger file in the actual currencies or cryptocurrencies that I
