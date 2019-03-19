@@ -23,7 +23,8 @@ Globably, this program:
     commodity or commodities are you interested in?) as arguments,
     and returns matching posts using the python ledger bridge, which
     must be compiled with your version of ledger. Its output defaults
-    to sdout, so it never modifies its imput files.
+    to sdout, so it never modifies its imput files. Your ledger journal
+    must be sorted by date.
 
  2. Creates a list "stack" of commodity lots with dates and cost basis.
     Currently it handles bitcoin (BTC), litecoin (LTC), and ether (ETH),
@@ -171,8 +172,8 @@ def is_empty(any_structure):
     else:
         return True
 
-print "comment"
-print "\nQuerying %r via the ledger bridge.\n" % filename
+print("comment")
+print("\nQuerying %r via the ledger bridge.\n") % filename
 
 # Use's the ledger python bridge to read from a ledger journal file.
 # NOTE: ledger file must be sorted by date, via "ledger print --sort date"
@@ -185,7 +186,9 @@ print "\nQuerying %r via the ledger bridge.\n" % filename
 lots = []
 
 for post in ledger.read_journal(filename).query(query):
-    s = "%s %s, %s" % (post.date, post.amount, post.account)
+    s = "%s %s %s" % (post.date, post.amount, post.account)
+#    print s
+    
     s = s.split(' ')
     if len(s) == 9:
         s[3] = "%s %s" % (s[3], s[4])
