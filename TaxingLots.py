@@ -292,7 +292,10 @@ for i in range(len(lines)):
         date = m.group(1)
         rates = getrates.getrates(date)       # USD/EUR = rates[2], USD/BTC = rates[3], USD/GBP = rates[4], USD/LTC = rates[5], UAH/USD = rates[6], JPY/USD = rates[7], CHF/USD = rates[8], XAU/USD = rates[9], XAG/USD = rates[10]
         time = getrates.gettime(rates[1])     # Specific time of rate conversion = time
-        USDEUR, USDBTC, USDGBP, USDLTC, UAHUSD, JPYUSD, CHFUSD, XAUUSD, XAGUSD = float(rates[2]), float(rates[3]), float(rates[4]), float(rates[5]), float(rates[6]), float(rates[7]), float(rates[8]), float(rates[9]), float(rates[10])
+        try:
+            USDEUR, USDBTC, USDGBP, USDLTC, UAHUSD, JPYUSD, CHFUSD, XAUUSD, XAGUSD = float(rates[2]), float(rates[3]), float(rates[4]), float(rates[5]), float(rates[6]), float(rates[7]), float(rates[8]), float(rates[9]), float(rates[10])
+        except ValueError,e:
+            print "error",e,"on line",i
 
         print "P %s EUR %.4f USD" % (date, USDEUR)
         print "P %s GBP %.4f USD" % (date, USDGBP)
