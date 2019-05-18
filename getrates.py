@@ -27,6 +27,7 @@ date,timestamp,USDEUR,USDBTC,USDGBP,USDLTC,UAHUSD,JPYUSD,CHFUSD,XAUUSD,XAGUSD,EU
                         list[8] is CHF/USD
                         list[9] is XAU/USD
                         list[10] is XAG/USD
+                        list[11] is CNY/BTC    (I added CNY for November 2013 only)
 
     TODO: add graceful error handling if function is given a date that's not in rates file.
     Currently this will generate a NoneType object error when the program is run, so verify

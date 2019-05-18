@@ -10,21 +10,21 @@ import getrates
 
 '''Queries a journal for lots, reduces them, & returns ledger-format lot reductions to sdout.
 
-$ python TaxingLots.py 'filename' 'query'
+$ python TaxingLots.py 'filename'
 
     filename  -- a ledger file, entries sorted by date
-    query     -- a ledger query for commodities to augment / reduce
+
 [NOT IMPLEMENTED YET:
+    query     -- a ledger query for commodities to augment / reduce
     method    -- FIFO [LIFO] (defaults to FIFO) ]
 
 Globably, this program:
 
- 1. Reads a ledger journal 'filename' and a ledger 'query' (what
-    commodity or commodities are you interested in?) as arguments,
-    and returns matching posts using the python ledger bridge, which
-    must be compiled with your version of ledger. Its output defaults
-    to sdout, so it never modifies its imput files. Your ledger journal
-    must be sorted by date.
+ 1. Reads a ledger journal 'filename', queries for reductions of any
+    assets under Assets:Crypto, and returns matching posts using the
+    python ledger bridge, which must be compiled with your version of
+    ledger. Its output defaults to sdout, so it never modifies its imput
+    files. Your ledger journal must be sorted by date.
 
  2. Creates a list "stack" of commodity lots with dates and cost basis.
     Currently it handles bitcoin (BTC), litecoin (LTC), and ether (ETH),
@@ -70,14 +70,16 @@ This is my first attempt at Python. Pull requests are welcome. However, I may
 be slow to respond as I'm learning python and busy with my family and my
 non-programming work.
 
-Writen by Joel Swanson. Version 0.03. Copyright 2017-2018. Licensed under
+Writen by Joel Swanson. Version 0.03. Copyright 2017-2019. Licensed under
 the GNU General Public License (GPL) Version 3. Absolutely no warranty,
 this program provided 'as is'. See https://www.gnu.org/licenses/gpl.html.'''
 
-script, filename, query = argv
+script, filename = argv
+
+# script, filename, query = argv    ** TODO  modify script to accept an arbitrary query.
 
 def convert_to_USD(foreign):
-    """Converts lot pricing to USD. Takes string "{[amount] [commodity symbol], returns list of amount and rate in USD"""
+    """Converts lot pricing to USD. Takes string "[amount] [commodity symbol]", returns list of amount and rate in USD"""
     foreign = foreign.split(' ')
     rates = getrates.getrates(date)
     USDEUR, USDBTC, USDGBP, USDLTC, UAHUSD, JPYUSD, CHFUSD, XAUUSD, XAGUSD = float(rates[2]), float(rates[3]), float(rates[4]), float(rates[5]), float(rates[6]), float(rates[7]), float(rates[8]), float(rates[9]), float(rates[10])
@@ -184,10 +186,12 @@ print("\nQuerying %r via the ledger bridge.\n") % filename
 #
 
 lots = []
+query = "Assets:Crypto"
+print "%s" % (query)
 
 for post in ledger.read_journal(filename).query(query):
     s = "%s %s %s" % (post.date, post.amount, post.account)
-#    print s
+    print s
     
     s = s.split(' ')
     if len(s) == 9:
@@ -218,15 +222,17 @@ for i in range (len(lots)):
     if amt > 0:                  # Adding positive lots to "stack".
         if lots[i][2] == 'BTC':
             BTC_holdings.append(lots[i])
-        elif lots[i][2] == 'ETH':
-            ETH_holdings.append(lots[i])
         elif lots[i][2] == 'LTC':
             LTC_holdings.append(lots[i])
+        elif lots[i][2] == 'ETH':
+            ETH_holdings.append(lots[i])
     elif amt < 0:
         if lots[i][2] == 'BTC,':
             lots[i][2] = 'BTC'
         elif lots[i][2] == 'LTC,':
             lots[i][2] = 'LTC'
+        elif lots[i][2] == 'ETH,':
+            lots[i][2] = 'ETH'
         reduce_stack.append(lots[i])
         
 print "\nBitcoin (BTC) lots:"
@@ -239,6 +245,16 @@ for i in range(len(BTC_holdings)):
 if BTC_holdings == stack:
     print "No lots to be reduced."
     
+print "\nLitecoin (LTC) lots"
+
+for i in range(len(LTC_holdings)):
+    amt = float(LTC_holdings[i][1])
+    LTC_holdings[i][1] = amt
+    print "LTC_holdings[%s] %s %s %s %s" % (i, LTC_holdings[i][0], LTC_holdings[i][1], LTC_holdings[i][2], LTC_holdings[i][3])
+
+if LTC_holdings == stack:
+    print "No lots to be reduced."
+
 print "\nEther (ETH) lots:"
 
 for i in range(len(ETH_holdings)):
@@ -249,16 +265,6 @@ for i in range(len(ETH_holdings)):
 if ETH_holdings == stack:
     print "No lots to be reduced."
 
-print "\nLitecoin (LTC) lots"
-
-for i in range(len(LTC_holdings)):
-    amt = float(LTC_holdings[i][1])
-    LTC_holdings[i][1] = amt
-    print "LTC_holdings[%s] %s %s %s %s" % (i, LTC_holdings[i][0], LTC_holdings[i][1], LTC_holdings[i][2], LTC_holdings[i][3])
-
-if LTC_holdings == stack:
-    print "No lots to be reduced."
-    
 print "\nReductions to be applied:"
 
 for i in range(len(reduce_stack)):
@@ -282,34 +288,44 @@ lines = []
 lines = f.readlines()
 tx_num = 0
 date = '2009-01-03'    # sample date to turn 'date'into a global variable; also the date of the Bitcoin genesis block.
-USDEUR = USDBTC = USDGBP = USDLTC = UAHUSD = JPYUSD = CHFUSD = XAUUSD = XAGUSD = 0.0
-
+USDEUR = USDBTC = USDGBP = USDLTC = UAHUSD = JPYUSD = CHFUSD = XAUUSD = XAGUSD = CNYBTC= 0.0
 
 for i in range(len(lines)):
     # For each date in ledger file, assigns conversion rate variables relative to USD
     m = re.search(r'(^(\d{4}-\d{2}-\d{2}))', lines[i])
     if m:
         date = m.group(1)
-        rates = getrates.getrates(date)       # USD/EUR = rates[2], USD/BTC = rates[3], USD/GBP = rates[4], USD/LTC = rates[5], UAH/USD = rates[6], JPY/USD = rates[7], CHF/USD = rates[8], XAU/USD = rates[9], XAG/USD = rates[10]
+        rates = getrates.getrates(date)       # USD/EUR = rates[2], USD/BTC = rates[3], USD/GBP = rates[4], USD/LTC = rates[5], UAH/USD = rates[6], JPY/USD = rates[7], CHF/USD = rates[8], XAU/USD = rates[9], XAG/USD = rates[10], CNY/BTC = rates[11]
         time = getrates.gettime(rates[1])     # Specific time of rate conversion = time
-        try:
-            USDEUR, USDBTC, USDGBP, USDLTC, UAHUSD, JPYUSD, CHFUSD, XAUUSD, XAGUSD = float(rates[2]), float(rates[3]), float(rates[4]), float(rates[5]), float(rates[6]), float(rates[7]), float(rates[8]), float(rates[9]), float(rates[10])
-        except ValueError,e:
-            print "error",e,"on line",i
-
-        print "P %s EUR %.4f USD" % (date, USDEUR)
-        print "P %s GBP %.4f USD" % (date, USDGBP)
-        print "P %s BTC %.4f USD" % (date, USDBTC)
-        print "P %s LCT %.4f USD\n" % (date, USDLTC)
+        try:                                  # As of 2019-04-06, don't have a historical Litecoin price history data before 2013-04-28.
+            if date < 2013-04-28:             
+                USDEUR, USDBTC, USDGBP, UAHUSD, JPYUSD, CHFUSD, XAUUSD, XAGUSD = float(rates[2]), float(rates[3]), float(rates[4]), float(rates[6]), float(rates[7]), float(rates[8]), float(rates[9]), float(rates[10])
+                print "P %s EUR %.4f USD" % (date, USDEUR)
+                print "P %s GBP %.4f USD" % (date, USDGBP)
+                print "P %s BTC %.4f USD" % (date, USDBTC)
 #        print "P %s USD %.4f UAH" % (date, UAHUSD)
 #        print "P %s USD %.4f JPY" % (date, JPYUSD)
 #        print "P %s USD %.4f CHF" % (date, CHFUSD)
 #        print "P %s XAU %.4f USD" % (date, 1/XAUUSD)
 #        print "P %s XAG %.4f USD\n" % (date, 1/XAGUSD)
+            else:
+                USDEUR, USDBTC, USDGBP, USDLTC, UAHUSD, JPYUSD, CHFUSD, XAUUSD, XAGUSD = float(rates[2]), float(rates[3]), float(rates[4]), float(rates[5]), float(rates[6]), float(rates[7]), float(rates[8]), float(rates[9]), float(rates[10])
+                print "P %s EUR %.4f USD" % (date, USDEUR)
+                print "P %s GBP %.4f USD" % (date, USDGBP)
+                print "P %s BTC %.4f USD" % (date, USDBTC)
+                print "P %s LTC %.4f USD\n" % (date, USDLTC)
+#        print "P %s USD %.4f UAH" % (date, UAHUSD)
+#        print "P %s USD %.4f JPY" % (date, JPYUSD)
+#        print "P %s USD %.4f CHF" % (date, CHFUSD)
+#        print "P %s XAU %.4f USD" % (date, 1/XAUUSD)
+#        print "P %s XAG %.4f USD\n" % (date, 1/XAGUSD)
+
+        except ValueError,e:
+            print "Error",e,"on line",i,"\n"
                 
         tx_num = tx_num + 1
-
-    m = re.search(r'Assets:Crypto.*\s{1,}(-\d+(\.\d+)?)\s(BTC|ETH|LTC)', lines[i])
+        
+    m = re.search(r'Assets:Crypto.*\s{1,}(-\d+(\.\d+)?)\s(BTC|ETH|LTC)', lines[i])     # Finds 
     if m:
         stack = []
         if m.group(3) == 'BTC':                                   # Matches commodity lot to commodity found in journal file.
