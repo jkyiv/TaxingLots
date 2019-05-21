@@ -108,22 +108,26 @@ def convert_to_USD(foreign):
     return priceUSD
 
 def strip_AZ(cstring):
-    """Given a string, removes initial & final ('A' & 'Z') character from a string, returns string."""
+    """Given a string, removes initial & final ('A' & 'Z') character from a
+    string, returns string."""
     cstring = cstring[1:]
     cstring = cstring[:(len(cstring)-1)]
     return cstring
 
 def reduce_lot(stack, reduce_stack):
-    """Given lists of holdings & reductions, reduces oldest lot & returns list of lot info with updated lot size.
+    """Given lists of holdings & reductions, reduces oldest lot & returns list
+    of lot info with updated lot size.
 
-    This function implements lot reductions following the priciple of First In, First Out (FIFO).
+    This function implements lot reductions following the priciple of First In,
+    First Out (FIFO).
 
-    In the returned 'lot_info' list, the updated_lot variable gives the new balance of the lot after
-    reduction. If its negative, that indicates the lot was fully reduced. The absolute value of the
-    negative 'updated_lot' needs to be reduce from the next lot holding in the stack for reduction.
+    In the returned 'lot_info' list, the updated_lot variable gives the new
+    balance of the lot after reduction. If its negative, that indicates the lot
+    was fully reduced. The absolute value of the negative 'updated_lot' needs
+    to be reduce from the next lot holding in the stack for reduction.
 
-    Lot and reduction pricing is converted to USD, so ledger can use the cost basis to calculate any
-    capital gains or capital losses."""
+    Lot and reduction pricing is converted to USD, so ledger can use the cost
+    basis to calculate any capital gains or capital losses."""
     
     lot_date, lot, lot_unit, lot_price = stack[0][0], float(stack[0][1]), stack[0][2], float(convert_to_USD(strip_AZ(stack[0][3])))
 
@@ -156,6 +160,8 @@ def capital_gains(amt, bought_at, sold_at):
     return gains
 
 def gains_info(amt, bought_at, sold_at, duration):
+    """Determines whether gains are long or short-term. Returns gains info in ledger format. """
+    
     if duration < 0:
         info = "    ; You can't reduce from a future lot."
     elif duration > 365:
@@ -194,15 +200,18 @@ for post in ledger.read_journal(filename).query(query):
     print s
     
     s = s.split(' ')
-    if len(s) == 9:
-        s[3] = "%s %s" % (s[3], s[4])
-        del s[4:8]
     if len(s) == 7:
         s[3] = "%s %s" % (s[3], s[4])
         del s[4]
         del s[4]
     elif len(s) == 4:
-        s.insert(3, "{1.00000000 BTC}")
+        if s[2] == 'BTC':
+            s.insert(3, "{1.00000000 BTC}")
+        elif s[2] == 'LTC':
+            s.insert(3, "{1.00000000 LTC}")
+        elif s[2] == 'ETH':
+            s.insert(3, "{1.00000000 ETH}")
+            
     lots.append(s)
 
 # Creates lists for cryptocurrency holdings, a list "stack" to hold
@@ -324,25 +333,30 @@ for i in range(len(lines)):
             print "Error",e,"on line",i,"\n"
                 
         tx_num = tx_num + 1
-        
-    m = re.search(r'Assets:Crypto.*\s{1,}(-\d+(\.\d+)?)\s(BTC|ETH|LTC)', lines[i])     # Finds 
+
+    # Find postings which reduce crypto assets .
+    m = re.search(r'Assets:Crypto.*\s{1,}(-\d+(\.\d+)?)\s(BTC|ETH|LTC)', lines[i])
     if m:
         stack = []
-        if m.group(3) == 'BTC':                                   # Matches commodity lot to commodity found in journal file.
-            stack = BTC_holdings                                  # Assigns current commodity holdings to the "stack" variable.
+        if m.group(3) == 'BTC':        # Matches commodity lot to commodity found in journal file.
+            stack = BTC_holdings       # Assigns current commodity holdings to the "stack" variable.
         elif m.group(3) == 'ETH':
             stack = ETH_holdings
         elif m.group(3) == 'LTC':
             stack = LTC_holdings
 
-        if m.group(3) == stack[0][2]:                             # Check that commodity symbols match, because one can't subtract APPL from ORANGE.
+        # Check that commodity symbols match, because one can't subtract APPL from ORANGE.
+        if m.group(3) == stack[0][2]:
 
-            if float(m.group(1)) == float(reduce_stack[0][1]):    # Check that reduction from ledger python bridge matches what the regex read from the journal file.
+            # Check that reduction from ledger python bridge matches what the regex read from the journal file.
+            if float(m.group(1)) == float(reduce_stack[0][1]):    
 
-                linfo = reduce_lot(stack, reduce_stack)           # Reduces lot and provides list of lot info 'linfo' variables to print results.
+                # Reduces lot and provides list of lot info 'linfo' variables to print results.
+                linfo = reduce_lot(stack, reduce_stack)
                 lot_date, lot, lot_unit, lot_price, reduction_date, reduction, reduction_unit, original_reduction_price, reduction_price, reduction_account, updated_lot, original_reduction_unit  = linfo[0], linfo[1], linfo[2], linfo[3], linfo[4], linfo[5], linfo[6], linfo[7], linfo[8], linfo[9], linfo[10], linfo[11]
 
-                while updated_lot <= 0:                           # Does reduction exceed size of lot? If so, clear lot & remove cleared lot from stack,
+                # Does reduction exceed size of lot? If so, clear lot & remove cleared lot from stack,
+                while updated_lot <= 0:
                       
                     print "    %s    -%s %s {%.2f USD} [%s] (lot cleared) @ %.2f USD" % (reduction_account, lot, reduction_unit, lot_price, lot_date, reduction_price)
                     if original_reduction_unit != 'USD':
@@ -354,12 +368,14 @@ for i in range(len(lines)):
                     print "%s" % gains_info(lot, lot_price, reduction_price, duration)
                     
                     if is_empty(stack):
-                        print "No more %s lots to reduce, 'stack' is empty." % lot_unit
+                        print "    ; No more %s lots to reduce, 'stack' is empty." % lot_unit
                         break
 
-                    stack = stack[1:]                   # Remove cleared lot from stack. This sets stack[0] to next oldest lot.
+                    # Remove cleared lot from stack. This sets stack[0] to next oldest lot.
+                    stack = stack[1:]
 
-                    reduce_stack[0][1] = updated_lot    # Sets remainder of lot reduction as amount to be reduced next.
+                    # Sets remainder of lot reduction as amount to be reduced next.
+                    reduce_stack[0][1] = updated_lot
                     
                     linfo = reduce_lot(stack, reduce_stack)
                     lot_date, lot, lot_unit, lot_price, reduction_date, reduction, reduction_unit, original_reduction_price, reduction_price, reduction_account, updated_lot, original_reduction_unit = linfo[0], linfo[1], linfo[2], linfo[3], linfo[4], linfo[5], linfo[6], linfo[7], linfo[8], linfo[9], linfo[10], linfo[11]
@@ -373,11 +389,14 @@ for i in range(len(lines)):
 
             print "%s" % gains_info(reduction, lot_price, reduction_price, duration)
 
-            stack[0][1] = updated_lot               # Sets remainder of lot reduction as amount in next held lot.
+            # Sets remainder of lot reduction as amount in next held lot.
+            stack[0][1] = updated_lot
 
-            reduce_stack = reduce_stack[1:]         # Removes reduced commodity sale from list of reductions to be booked.   
-            
-            if m.group(3) == 'BTC':                               # Update commodities holdings with reductions
+            # Removes reduced commodity sale from list of reductions to be booked.   
+            reduce_stack = reduce_stack[1:]
+
+            # Update commodities holdings with reductions
+            if m.group(3) == 'BTC':
                 BTC_holdings = stack
             elif m.group(3) == 'ETH':
                 ETH_holdings = stack
