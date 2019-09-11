@@ -297,7 +297,7 @@ lines = []
 lines = f.readlines()
 tx_num = 0
 date = '2009-01-03'    # sample date to turn 'date'into a global variable; also the date of the Bitcoin genesis block.
-USDEUR = USDBTC = USDGBP = USDLTC = UAHUSD = JPYUSD = CHFUSD = XAUUSD = XAGUSD = CNYBTC= 0.0
+USDEUR = USDBTC = USDGBP = USDLTC = UAHUSD = JPYUSD = CHFUSD = XAUUSD = XAGUSD = CNYBTC= 0.0   # initialize all rates.
 
 for i in range(len(lines)):
     # For each date in ledger file, assigns conversion rate variables relative to USD
