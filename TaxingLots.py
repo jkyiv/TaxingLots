@@ -142,6 +142,17 @@ def reduce_lot(stack, reductions):
 
     return lot_info
 
+def reductions_remaining(reductions, i):
+    """Prints lot sales to be reduced. Takes 'reductions' list as input. """
+    date_r = reductions[i][0]
+    reduction = float(reductions[i][1])
+    unit_r = reductions[i][2]
+    price_r = reductions[i][3]
+    price_r = price_r[1:]
+    price_r = price_r[:(len(price_r)-1)]
+    reductions_info = "reductions[%s] %s %.8f %s %s" % (i, date_r, reduction, unit_r, price_r)
+    return reductions_info
+
 def duration_held(purchase_date, sale_date):
     """Takes purchase and sale dates, returns number of days commodity held. Depend on datetime module."""
     buydate = datetime.datetime.strptime(purchase_date, "%Y-%m-%d")
@@ -235,15 +246,15 @@ for post in ledger.read_journal(filename).query(query):
 # whichever cryptocurrency is actively being reduced, and a "reductions"
 # list of the reductions to be applied.
 
-for commodity in holdings:
-    for i in range (len(holdings[commodity])):
-        print 'holdings[%s][%s]: %s' % (commodity, i, holdings[commodity][i])
+# for commodity in holdings:
+#    for i in range (len(holdings[commodity])):
+#        print 'holdings[%s][%s]: %s' % (commodity, i, holdings[commodity][i])
 
 BTC_holdings = []  # replaced by: holdings['BTC']
 ETH_holdings = []  # replaced by: holdings['ETH']
 LTC_holdings = []  # replaced by: holdings['LTC']
+
 stack = []
-reductions = []
 
 gains = []   # to accumulate capital gains from gains_info()
 
@@ -271,6 +282,7 @@ for commodity in holdings:     # Print lists of commodity holdings
         amt = float(holdings[commodity][i][1])
         print "holdings[%s][%s] %s %.8f %s %s" % (commodity, i, holdings[commodity][i][0], amt, commodity, holdings[commodity][i][3])
                                               
+''' legacy code for displaying lots
 print "\n\nBitcoin (BTC) lots:"
 
 for i in range(len(BTC_holdings)):
@@ -300,17 +312,21 @@ for i in range(len(ETH_holdings)):
 
 if ETH_holdings == stack:
     print "No lots to be reduced."
+'''
 
 print "\nReductions to be applied:"
-
 for i in range(len(reductions)):
-    date_r = reductions[i][0]
-    reduction = float(reductions[i][1])
-    unit_r = reductions[i][2]
-    price_r = reductions[i][3]
-    price_r = price_r[1:]
-    price_r = price_r[:(len(price_r)-1)]
-    print "reductions[%s] %s %.8f %s %s" % (i, date_r, reduction, unit_r, price_r)
+    redux_info = reductions_remaining(reductions, i)
+    print '%s' % redux_info
+
+#for i in range(len(reductions)):
+#    date_r = reductions[i][0]
+#    reduction = float(reductions[i][1])
+#    unit_r = reductions[i][2]
+#    price_r = reductions[i][3]
+#    price_r = price_r[1:]
+#    price_r = price_r[:(len(price_r)-1)]
+#    print "reductions[%s] %s %.8f %s %s" % (i, date_r, reduction, unit_r, price_r)
 
 print "end comment"
 print
@@ -502,20 +518,14 @@ for i in range(len(LTC_holdings)):
     print "    %s %s %s %s" % (LTC_holdings[i][0], LTC_holdings[i][1], LTC_holdings[i][2], LTC_holdings[i][3])
 
 print "Total holdings: %s LTC" % sumLTC
-    
-print "\nReductions to be applied:"
-
-for i in range(len(reductions)):
-    date_r = reductions[i][0]
-    reduction = float(reductions[i][1])
-    unit_r = reductions[i][2]
-    price_r = reductions[i][3]
-    price_r = price_r[1:]
-    price_r = price_r[:(len(price_r)-1)]
-    print "reductions[%s] %s %s %s %s" % (i, date_r, reduction, unit_r, price_r)
 
 if is_empty(reductions):
     print "    All lots have been reduced.\n"
+else:
+    print "\nReductions to be applied:"
+    for i in range(len(reductions)):
+        redux_info = reductions_remaining(reductions, i)
+        print '%s' % redux_info
 
 capitalgains = 0
 for i in range(len(gains)):
