@@ -112,7 +112,7 @@ def strip_AZ(cstring):
     cstring = cstring[:(len(cstring)-1)]
     return cstring
 
-def reduce_lot(stack, reduce_stack):
+def reduce_lot(stack, reductions):
     """Given lists of holdings & reductions, reduces oldest lot & returns list
     of lot info with updated lot size.
 
@@ -129,12 +129,12 @@ def reduce_lot(stack, reduce_stack):
     
     lot_date, lot, lot_unit, lot_price = stack[0][0], float(stack[0][1]), stack[0][2], float(convert_to_USD(strip_AZ(stack[0][3])))
 
-    reduction_date, reduction, reduction_unit = reduce_stack[0][0], abs(float(reduce_stack[0][1])), reduce_stack[0][2] 
-    original_reduction_price = strip_AZ(reduce_stack[0][3])
+    reduction_date, reduction, reduction_unit = reductions[0][0], abs(float(reductions[0][1])), reductions[0][2] 
+    original_reduction_price = strip_AZ(reductions[0][3])
     original_reduction_unit = original_reduction_price.split(' ')
     original_reduction_unit = original_reduction_unit[1]
 
-    reduction_price, reduction_account = convert_to_USD(strip_AZ(reduce_stack[0][3])), reduce_stack[0][4]
+    reduction_price, reduction_account = convert_to_USD(strip_AZ(reductions[0][3])), reductions[0][4]
             
     updated_lot = lot - reduction
 
@@ -198,7 +198,6 @@ reductions = []
 
 for post in ledger.read_journal(filename).query(query):
     s = "%s %s %s" % (post.date, post.amount, post.account)
-    # Add USD exchange rate info to 'amount' via getrates()
     posts = s.split()
     date = '%s' % (post.date)
     rates = getrates.getrates(date)
@@ -232,23 +231,19 @@ for post in ledger.read_journal(filename).query(query):
 
     lots.append(s)
 
-#holdings['reductions'] = reducing   # TODO: put this in the 'elif amt < 0' above
-                                    # (This currently raises a TypeError ??? )
-
 # Creates lists for cryptocurrency holdings, a list "stack" to hold
-# whichever cryptocurrency is actively being reduced, and a "reduce_stack"
+# whichever cryptocurrency is actively being reduced, and a "reductions"
 # list of the reductions to be applied.
-
 
 for commodity in holdings:
     for i in range (len(holdings[commodity])):
         print 'holdings[%s][%s]: %s' % (commodity, i, holdings[commodity][i])
 
-BTC_holdings = []
-ETH_holdings = []
-LTC_holdings = []
+BTC_holdings = []  # replaced by: holdings['BTC']
+ETH_holdings = []  # replaced by: holdings['ETH']
+LTC_holdings = []  # replaced by: holdings['LTC']
 stack = []
-reduce_stack = []
+reductions = []
 
 gains = []   # to accumulate capital gains from gains_info()
 
@@ -268,23 +263,16 @@ for i in range (len(lots)):
             lots[i][2] = 'LTC'
         elif lots[i][2] == 'ETH,':
             lots[i][2] = 'ETH'
-        reduce_stack.append(lots[i])
+        reductions.append(lots[i])
 
-if BTC_holdings == holdings['BTC']:
-    print '\nBTC_holdings matches holdings[BTC]'
-else:
-    print 'false'
+for commodity in holdings:     # Print lists of commodity holdings
+    print '\n%s lots:' % (commodity)
+    for i in range(len(holdings[commodity])):
+        amt = float(holdings[commodity][i][1])
+        print "holdings[%s][%s] %s %.8f %s %s" % (commodity, i, holdings[commodity][i][0], amt, commodity, holdings[commodity][i][3])
+                                              
+print "\n\nBitcoin (BTC) lots:"
 
-if LTC_holdings == holdings['LTC']:
-    print 'LTC_holdings matches holdings[LTC]'
-else:
-    print 'false'
-
-if reduce_stack == reductions:
-    print 'reduce_stack matches reductions'
-
-print "\nBitcoin (BTC) lots:"
-    
 for i in range(len(BTC_holdings)):
     amt = float(BTC_holdings[i][1])
     BTC_holdings[i][1] = amt
@@ -315,14 +303,14 @@ if ETH_holdings == stack:
 
 print "\nReductions to be applied:"
 
-for i in range(len(reduce_stack)):
-    date_r = reduce_stack[i][0]
-    reduction = float(reduce_stack[i][1])
-    unit_r = reduce_stack[i][2]
-    price_r = reduce_stack[i][3]
+for i in range(len(reductions)):
+    date_r = reductions[i][0]
+    reduction = float(reductions[i][1])
+    unit_r = reductions[i][2]
+    price_r = reductions[i][3]
     price_r = price_r[1:]
     price_r = price_r[:(len(price_r)-1)]
-    print "reduce_stack[%s] %s %.8f %s %s" % (i, date_r, reduction, unit_r, price_r)
+    print "reductions[%s] %s %.8f %s %s" % (i, date_r, reduction, unit_r, price_r)
 
 print "end comment"
 print
@@ -394,10 +382,10 @@ for i in range(len(lines)):
         if m.group(3) == stack[0][2]:
 
             # Check that reduction from ledger python bridge matches what the regex read from the journal file.
-            if float(m.group(1)) == float(reduce_stack[0][1]):    
+            if float(m.group(1)) == float(reductions[0][1]):    
 
                 # Reduces lot and provides list of lot info 'linfo' variables to print results.
-                linfo = reduce_lot(stack, reduce_stack)
+                linfo = reduce_lot(stack, reductions)
                 lot_date, lot, lot_unit, lot_price, reduction_date, reduction, reduction_unit, original_reduction_price, reduction_price, reduction_account, updated_lot, original_reduction_unit  = linfo[0], linfo[1], linfo[2], linfo[3], linfo[4], linfo[5], linfo[6], linfo[7], linfo[8], linfo[9], linfo[10], linfo[11]
 
                 # Does reduction exceed size of lot? If so, clear lot & remove cleared lot from stack,
@@ -420,9 +408,9 @@ for i in range(len(lines)):
                     stack = stack[1:]
 
                     # Sets remainder of lot reduction as amount to be reduced next.
-                    reduce_stack[0][1] = updated_lot
+                    reductions[0][1] = updated_lot
                     
-                    linfo = reduce_lot(stack, reduce_stack)
+                    linfo = reduce_lot(stack, reductions)
                     lot_date, lot, lot_unit, lot_price, reduction_date, reduction, reduction_unit, original_reduction_price, reduction_price, reduction_account, updated_lot, original_reduction_unit = linfo[0], linfo[1], linfo[2], linfo[3], linfo[4], linfo[5], linfo[6], linfo[7], linfo[8], linfo[9], linfo[10], linfo[11]
 
             print "    %s    -%.8f %s {%.2f USD} [%s] @ %.2f USD" % (reduction_account, reduction, reduction_unit, lot_price, lot_date, reduction_price)
@@ -438,7 +426,7 @@ for i in range(len(lines)):
             stack[0][1] = updated_lot
 
             # Removes reduced commodity sale from list of reductions to be booked.   
-            reduce_stack = reduce_stack[1:]
+            reductions = reductions[1:]
 
             # Update commodities holdings with reductions
             if m.group(3) == 'BTC':
@@ -517,16 +505,16 @@ print "Total holdings: %s LTC" % sumLTC
     
 print "\nReductions to be applied:"
 
-for i in range(len(reduce_stack)):
-    date_r = reduce_stack[i][0]
-    reduction = float(reduce_stack[i][1])
-    unit_r = reduce_stack[i][2]
-    price_r = reduce_stack[i][3]
+for i in range(len(reductions)):
+    date_r = reductions[i][0]
+    reduction = float(reductions[i][1])
+    unit_r = reductions[i][2]
+    price_r = reductions[i][3]
     price_r = price_r[1:]
     price_r = price_r[:(len(price_r)-1)]
-    print "reduce_stack[%s] %s %s %s %s" % (i, date_r, reduction, unit_r, price_r)
+    print "reductions[%s] %s %s %s %s" % (i, date_r, reduction, unit_r, price_r)
 
-if is_empty(reduce_stack):
+if is_empty(reductions):
     print "    All lots have been reduced.\n"
 
 capitalgains = 0
