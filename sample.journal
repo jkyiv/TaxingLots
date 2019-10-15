@@ -1,6 +1,6 @@
 2016-10-01 bitcoin purchase
-    Assets:Crypto:Bitcoin               0.53443347 BTC @ 482.79 USD
-    Assets:Checking:US           -258.02 USD
+    Assets:Crypto:Bitcoin               0.50 BTC @ 450 USD
+    Assets:Checking:US           -225 USD
 
 2016-10-03 * Create offer fee
     Expenses:Fees:Crypto      0.0005 BTC @@ 0.20875 EUR

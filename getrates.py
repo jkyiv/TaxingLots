@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/Usr/bin/env python
 from sys import argv
 from decimal import *
 from collections import deque
