@@ -74,9 +74,7 @@ Writen by Joel Swanson. Version 0.03. Copyright 2017-2019. Licensed under
 the GNU General Public License (GPL) Version 3. Absolutely no warranty,
 this program provided 'as is'. See https://www.gnu.org/licenses/gpl.html.'''
 
-script, filename = argv
-
-# script, filename, query = argv    ** TODO  modify script to accept an arbitrary query.
+script, filename, query = argv
 
 def convert_to_USD(foreign):
     """Converts lot pricing to USD. Takes string "[amount] [commodity symbol]", returns list of amount and rate in USD"""
@@ -192,31 +190,59 @@ print("\nQuerying %r via the ledger bridge.\n") % filename
 #
 
 lots = []
-query = "Assets:Crypto"
+# query = "Assets:Crypto"
 print "%s" % (query)
+
+holdings = {}
+reductions = []
 
 for post in ledger.read_journal(filename).query(query):
     s = "%s %s %s" % (post.date, post.amount, post.account)
+    # Add USD exchange rate info to 'amount' via getrates()
+    posts = s.split()
+    date = '%s' % (post.date)
+    rates = getrates.getrates(date)
+    commodity = '%s' % (post.amount.commodity)
+    amount = '%s' % (post.amount)
+    if len(posts) == 4:     # TODO Convert getrates to dict
+        if commodity == 'BTC':
+            annotation = '{%s USD} [%s]' % (rates[3], date)
+        elif commodity == 'LTC':
+            annotation = '{%s USD} [%s]' % (rates[5], date)
+        amount = '%s %s' % (amount, annotation)
+        s = '%s %s %s' % (date, amount, post.account)
     print s
-    
+
     s = s.split(' ')
     if len(s) == 7:
         s[3] = "%s %s" % (s[3], s[4])
         del s[4]
         del s[4]
-    elif len(s) == 4:
-        if s[2] == 'BTC':
-            s.insert(3, "{1.00000000 BTC}")
-        elif s[2] == 'LTC':
-            s.insert(3, "{1.00000000 LTC}")
-        elif s[2] == 'ETH':
-            s.insert(3, "{1.00000000 ETH}")
-            
+    s = list(s)
+    
+    if commodity in holdings:
+        if commodity == s[2]:
+            amt = float(s[1])
+            if amt > 0:
+                holdings[commodity].append(s)
+            elif amt < 0:
+                reductions.append(s)
+    else:
+        holdings[commodity] = [s]
+
     lots.append(s)
+
+#holdings['reductions'] = reducing   # TODO: put this in the 'elif amt < 0' above
+                                    # (This currently raises a TypeError ??? )
 
 # Creates lists for cryptocurrency holdings, a list "stack" to hold
 # whichever cryptocurrency is actively being reduced, and a "reduce_stack"
 # list of the reductions to be applied.
+
+
+for commodity in holdings:
+    for i in range (len(holdings[commodity])):
+        print 'holdings[%s][%s]: %s' % (commodity, i, holdings[commodity][i])
 
 BTC_holdings = []
 ETH_holdings = []
@@ -243,13 +269,26 @@ for i in range (len(lots)):
         elif lots[i][2] == 'ETH,':
             lots[i][2] = 'ETH'
         reduce_stack.append(lots[i])
-        
-print "\nBitcoin (BTC) lots:"
 
+if BTC_holdings == holdings['BTC']:
+    print '\nBTC_holdings matches holdings[BTC]'
+else:
+    print 'false'
+
+if LTC_holdings == holdings['LTC']:
+    print 'LTC_holdings matches holdings[LTC]'
+else:
+    print 'false'
+
+if reduce_stack == reductions:
+    print 'reduce_stack matches reductions'
+
+print "\nBitcoin (BTC) lots:"
+    
 for i in range(len(BTC_holdings)):
     amt = float(BTC_holdings[i][1])
     BTC_holdings[i][1] = amt
-    print "BTC_holdings[%s] %s %s %s %s" % (i, BTC_holdings[i][0], BTC_holdings[i][1], BTC_holdings[i][2], BTC_holdings[i][3])
+    print "BTC_holdings[%s] %s %.8f %s %s" % (i, BTC_holdings[i][0], BTC_holdings[i][1], BTC_holdings[i][2], BTC_holdings[i][3])
 
 if BTC_holdings == stack:
     print "No lots to be reduced."
@@ -259,7 +298,7 @@ print "\nLitecoin (LTC) lots"
 for i in range(len(LTC_holdings)):
     amt = float(LTC_holdings[i][1])
     LTC_holdings[i][1] = amt
-    print "LTC_holdings[%s] %s %s %s %s" % (i, LTC_holdings[i][0], LTC_holdings[i][1], LTC_holdings[i][2], LTC_holdings[i][3])
+    print "LTC_holdings[%s] %s %.8f %s %s" % (i, LTC_holdings[i][0], LTC_holdings[i][1], LTC_holdings[i][2], LTC_holdings[i][3])
 
 if LTC_holdings == stack:
     print "No lots to be reduced."
@@ -269,7 +308,7 @@ print "\nEther (ETH) lots:"
 for i in range(len(ETH_holdings)):
     amt = float(ETH_holdings[i][1])
     ETH_holdings[i][1] = amt
-    print "ETH_holdings[%s] %s %s %s %s" % (i, ETH_holdings[i][0], ETH_holdings[i][1], ETH_holdings[i][2], ETH_holdings[i][3])
+    print "ETH_holdings[%s] %s %.8f %s %s" % (i, ETH_holdings[i][0], ETH_holdings[i][1], ETH_holdings[i][2], ETH_holdings[i][3])
 
 if ETH_holdings == stack:
     print "No lots to be reduced."
@@ -283,7 +322,7 @@ for i in range(len(reduce_stack)):
     price_r = reduce_stack[i][3]
     price_r = price_r[1:]
     price_r = price_r[:(len(price_r)-1)]
-    print "reduce_stack[%s] %s %s %s %s" % (i, date_r, reduction, unit_r, price_r)
+    print "reduce_stack[%s] %s %.8f %s %s" % (i, date_r, reduction, unit_r, price_r)
 
 print "end comment"
 print
@@ -304,37 +343,43 @@ for i in range(len(lines)):
     m = re.search(r'(^(\d{4}-\d{2}-\d{2}))', lines[i])
     if m:
         date = m.group(1)
-        rates = getrates.getrates(date)       # USD/EUR = rates[2], USD/BTC = rates[3], USD/GBP = rates[4], USD/LTC = rates[5], UAH/USD = rates[6], JPY/USD = rates[7], CHF/USD = rates[8], XAU/USD = rates[9], XAG/USD = rates[10], CNY/BTC = rates[11]
-        time = getrates.gettime(rates[1])     # Specific time of rate conversion = time
-        try:                                  # As of 2019-04-06, don't have a historical Litecoin price history data before 2013-04-28.
+        # USD/EUR = rates[2], USD/BTC = rates[3], USD/GBP = rates[4],
+        # USD/LTC = rates[5], UAH/USD = rates[6], JPY/USD = rates[7],
+        # CHF/USD = rates[8], XAU/USD = rates[9], XAG/USD = rates[10],
+        # CNY/BTC = rates[11]
+        rates = getrates.getrates(date)
+        # Specific time of rate conversion = time
+        time = getrates.gettime(rates[1])
+        try:
+            # As of 2019-04-06, don't have a historical Litecoin price
+            # history data before 2013-04-28.
             if date < 2013-04-28:             
                 USDEUR, USDBTC, USDGBP, UAHUSD, JPYUSD, CHFUSD, XAUUSD, XAGUSD = float(rates[2]), float(rates[3]), float(rates[4]), float(rates[6]), float(rates[7]), float(rates[8]), float(rates[9]), float(rates[10])
                 print "P %s EUR %.4f USD" % (date, USDEUR)
                 print "P %s GBP %.4f USD" % (date, USDGBP)
                 print "P %s BTC %.4f USD" % (date, USDBTC)
-#        print "P %s USD %.4f UAH" % (date, UAHUSD)
-#        print "P %s USD %.4f JPY" % (date, JPYUSD)
-#        print "P %s USD %.4f CHF" % (date, CHFUSD)
-#        print "P %s XAU %.4f USD" % (date, 1/XAUUSD)
-#        print "P %s XAG %.4f USD\n" % (date, 1/XAGUSD)
+                # print "P %s USD %.4f UAH" % (date, UAHUSD)
+                # print "P %s USD %.4f JPY" % (date, JPYUSD)
+                # print "P %s USD %.4f CHF" % (date, CHFUSD)
+                # print "P %s XAU %.4f USD" % (date, 1/XAUUSD)
+                # print "P %s XAG %.4f USD\n" % (date, 1/XAGUSD)
             else:
                 USDEUR, USDBTC, USDGBP, USDLTC, UAHUSD, JPYUSD, CHFUSD, XAUUSD, XAGUSD = float(rates[2]), float(rates[3]), float(rates[4]), float(rates[5]), float(rates[6]), float(rates[7]), float(rates[8]), float(rates[9]), float(rates[10])
                 print "P %s EUR %.4f USD" % (date, USDEUR)
                 print "P %s GBP %.4f USD" % (date, USDGBP)
                 print "P %s BTC %.4f USD" % (date, USDBTC)
                 print "P %s LTC %.4f USD\n" % (date, USDLTC)
-#        print "P %s USD %.4f UAH" % (date, UAHUSD)
-#        print "P %s USD %.4f JPY" % (date, JPYUSD)
-#        print "P %s USD %.4f CHF" % (date, CHFUSD)
-#        print "P %s XAU %.4f USD" % (date, 1/XAUUSD)
-#        print "P %s XAG %.4f USD\n" % (date, 1/XAGUSD)
-
+                # print "P %s USD %.4f UAH" % (date, UAHUSD)
+                # print "P %s USD %.4f JPY" % (date, JPYUSD)
+                # print "P %s USD %.4f CHF" % (date, CHFUSD)
+                # print "P %s XAU %.4f USD" % (date, 1/XAUUSD)
+                # print "P %s XAG %.4f USD\n" % (date, 1/XAGUSD)
         except ValueError,e:
             print "Error",e,"on line",i,"\n"
                 
         tx_num = tx_num + 1
 
-    # Find postings which reduce crypto assets .
+    # Find postings which reduce crypto assets (i.e., where Assets:Crypto has a negative value) .
     m = re.search(r'Assets:Crypto.*\s{1,}(-\d+(\.\d+)?)\s(BTC|ETH|LTC)', lines[i])
     if m:
         stack = []
@@ -358,10 +403,10 @@ for i in range(len(lines)):
                 # Does reduction exceed size of lot? If so, clear lot & remove cleared lot from stack,
                 while updated_lot <= 0:
                       
-                    print "    %s    -%s %s {%.2f USD} [%s] (lot cleared) @ %.2f USD" % (reduction_account, lot, reduction_unit, lot_price, lot_date, reduction_price)
+                    print "    %s    -%.8f %s {%.2f USD} [%s] (lot cleared) @ %.2f USD" % (reduction_account, lot, reduction_unit, lot_price, lot_date, reduction_price)
                     if original_reduction_unit != 'USD':
                         print "    ; Reduction price converted from @ %s" % (original_reduction_price)
-                    print "    ; Lot size remaining: %s %s - %s %s (reduction) = %s %s" % (lot, lot_unit, reduction, reduction_unit, updated_lot, lot_unit)
+                    print "    ; Lot size remaining: %.8f %s - %s %s (reduction) = %s %s" % (lot, lot_unit, reduction, reduction_unit, updated_lot, lot_unit)
 
                     duration = duration_held(lot_date, reduction_date)
 
@@ -380,10 +425,10 @@ for i in range(len(lines)):
                     linfo = reduce_lot(stack, reduce_stack)
                     lot_date, lot, lot_unit, lot_price, reduction_date, reduction, reduction_unit, original_reduction_price, reduction_price, reduction_account, updated_lot, original_reduction_unit = linfo[0], linfo[1], linfo[2], linfo[3], linfo[4], linfo[5], linfo[6], linfo[7], linfo[8], linfo[9], linfo[10], linfo[11]
 
-            print "    %s    -%s %s {%.2f USD} [%s] @ %.2f USD" % (reduction_account, reduction, reduction_unit, lot_price, lot_date, reduction_price)
+            print "    %s    -%.8f %s {%.2f USD} [%s] @ %.2f USD" % (reduction_account, reduction, reduction_unit, lot_price, lot_date, reduction_price)
             if original_reduction_unit != 'USD':
                 print "    ; Reduction price converted from @ %s" % (original_reduction_price)
-            print "    ; Lot size remaining: %s %s - %s %s (reduction) = %s %s" % (lot, lot_unit, reduction, reduction_unit, updated_lot, lot_unit)
+            print "    ; Lot size remaining: %.8f %s - %s %s (reduction) = %s %s" % (lot, lot_unit, reduction, reduction_unit, updated_lot, lot_unit)
 
             duration = duration_held(lot_date, reduction_date)
 
@@ -404,12 +449,13 @@ for i in range(len(lines)):
                 LTC_holdings = stack
         else:
             print "    ; UH OH: Symbols %s and %s don't match. See line %s in journal file." % (m.group(3), stack[0][2], i)
-    else:                                                         # Switching cost basis prices to USD.
+    else:                   # Switching cost basis prices to USD.
         m = re.search(r'(^(\d{4}-\d{2}-\d{2}).*)\n', lines[i])
         m1a = re.search(r'(Assets:Crypto:Ether\s{1,}(\d+(\.\d+)?)\sETH\s@\s)((\d+(\.\d+)?)\sBTC)', lines[i])
-        m1b = re.search(r'(Assets:Crypto:Litecoin\s{1,}(\d+(\.\d+)?)\sLTC\s@\s)((\d+(\.\d+)?)\sBTC)', lines[i])
-#        m2 = re.search(r'(Assets:Crypto:Bitcoin\s{1,}(\d+(\.\d+)?)\sBTC)\n', lines[i])
+        m1b = re.search(r'(Assets:Crypto:LTC\s{1,}(\d+(\.\d+)?)\sLTC\s@\s)((\d+(\.\d+)?)\sBTC)', lines[i])
         m3 = re.search(r'((Assets|Expenses|Liabilities).*\s{1,})((-?\d+(\.\d+)?)\s(EUR|GBP))', lines[i])
+        m3a = re.search(r'(Expenses:Fees.*\s{1,})((\d+(\.\d+)?)\s(BTC|LTC))', lines[i])
+        m3b = re.search(r'(Assets:Crypto:LTC\s{1,}((\d+(\.\d+)?)\sLTC))', lines[i])
         m4 = re.search(r'(Income:CapitalGains)', lines[i])
         if m:
             print "%s           ; Transaction No. %s" % (m.group(1), tx_num)
@@ -419,8 +465,6 @@ for i in range(len(lines)):
         elif m1b:
             USDLTC = convert_to_USD(m1b.group(4))                  # Converts LTC price in BTC to price in USD
             print "    %s%.f2 USD     ; Originally @ %s BTC" % (m1b.group(1), USDLTC, m1b.group(5)) 
-#        elif m2:
-#            print "    %s @ %.2f USD\n" % (m2.group(1), 1/USDBTC),
         elif m3:
             if m3.group(6) == 'EUR':
                 EUR_ref = convert_to_USD(m3.group(3))
@@ -428,6 +472,13 @@ for i in range(len(lines)):
             elif m3.group(6) == 'GBP':
                 GBP_ref = convert_to_USD(m3.group(3))
                 print "    %s%.2f USD     ; @ %s GBP" % (m3.group(1), GBP_ref, m3.group(4))
+        elif m3a:
+            if m3a.group(5) == 'BTC':
+                print '%s @ %.2f USD' % (lines[i][:-1], USDBTC)
+            elif m3a.group(5) == 'LTC':
+                print '%s @ %.2f USD' % (lines[i][:-1], USDLTC)
+        elif m3b:
+            print '%s @ %s USD' % (lines[i][:-1], USDLTC) 
         elif m4:
             pass
         else:
