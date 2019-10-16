@@ -10,12 +10,12 @@ import getrates
 
 '''Queries a journal for lots, reduces them, & returns ledger-format lot reductions to sdout.
 
-$ python TaxingLots.py 'filename'
+$ python TaxingLots.py 'filename' Assets:Crypto
 
     filename  -- a ledger file, entries sorted by date
 
 [NOT IMPLEMENTED YET:
-    query     -- a ledger query for commodities to augment / reduce
+    query     -- generic ledger query to augment or reduce commodities
     method    -- FIFO [LIFO] (defaults to FIFO) ]
 
 Globably, this program:
@@ -142,6 +142,18 @@ def reduce_lot(stack, reductions):
 
     return lot_info
 
+def display_commodity(commodity):
+    """Given a commodity symbol, determines decimal precision """
+    # TODO learn better way to do this
+    is_fiat = {'EUR','GBP','UAH','CHF','JPY','USD'}
+    is_crypto = {'BTC','LTC','ETH'}
+    is_commodity ={'XAU','XAG'}
+    if commodity in is_fiat or is_commodity:
+        display_decimals = 2
+    if commodity in is_crypto:
+        display_decimals = 8
+    return display_decimals
+
 def reductions_remaining(reductions, i):
     """Prints lot sales to be reduced. Takes 'reductions' list as input. """
     date_r = reductions[i][0]
@@ -197,15 +209,15 @@ print("\nQuerying %r via the ledger bridge.\n") % filename
 #
 # Each posting is broken into a list of strings, s.
 # s[0] is date, s[1] is amount, s[2] unit, s[3] price, s[4] account
-# "lots" is a list of s strings.
-#
+# "holdings" is a dictionary with commodity symbols for keys, and each
+# value is a list of s strings from the postings.
 
-lots = []
-# query = "Assets:Crypto"
 print "%s" % (query)
 
-holdings = {}
-reductions = []
+holdings = {}    # keys: commodity symbols; values: commodity postings
+reductions = []  # commodity postings to be reduced from holdings
+stack = []       # hold whichever cryptocurrency is actively being reduced
+gains = []       # accumulate capital gains from gains_info()
 
 for post in ledger.read_journal(filename).query(query):
     s = "%s %s %s" % (post.date, post.amount, post.account)
@@ -216,9 +228,9 @@ for post in ledger.read_journal(filename).query(query):
     amount = '%s' % (post.amount)
     if len(posts) == 4:     # TODO Convert getrates to dict
         if commodity == 'BTC':
-            annotation = '{%s USD} [%s]' % (rates[3], date)
+            annotation = '{%.2f USD} [%s]' % (float(rates[3]), date)
         elif commodity == 'LTC':
-            annotation = '{%s USD} [%s]' % (rates[5], date)
+            annotation = '{%.2f USD} [%s]' % (float(rates[5]), date)
         amount = '%s %s' % (amount, annotation)
         s = '%s %s %s' % (date, amount, post.account)
     print s
@@ -226,12 +238,11 @@ for post in ledger.read_journal(filename).query(query):
     s = s.split(' ')
     if len(s) == 7:
         s[3] = "%s %s" % (s[3], s[4])
-        del s[4]
-        del s[4]
+        s[:-2]
     s = list(s)
     
-    if commodity in holdings:
-        if commodity == s[2]:
+    if commodity in holdings:        # Fill holdings with positive commodity
+        if commodity == s[2]:        # postings. Reductions sorted out. 
             amt = float(s[1])
             if amt > 0:
                 holdings[commodity].append(s)
@@ -240,93 +251,16 @@ for post in ledger.read_journal(filename).query(query):
     else:
         holdings[commodity] = [s]
 
-    lots.append(s)
-
-# Creates lists for cryptocurrency holdings, a list "stack" to hold
-# whichever cryptocurrency is actively being reduced, and a "reductions"
-# list of the reductions to be applied.
-
-# for commodity in holdings:
-#    for i in range (len(holdings[commodity])):
-#        print 'holdings[%s][%s]: %s' % (commodity, i, holdings[commodity][i])
-
-BTC_holdings = []  # replaced by: holdings['BTC']
-ETH_holdings = []  # replaced by: holdings['ETH']
-LTC_holdings = []  # replaced by: holdings['LTC']
-
-stack = []
-
-gains = []   # to accumulate capital gains from gains_info()
-
-for i in range (len(lots)):
-    amt = float(lots[i][1])      # changing string to float
-    if amt > 0:                  # Adding positive lots to "stack".
-        if lots[i][2] == 'BTC':
-            BTC_holdings.append(lots[i])
-        elif lots[i][2] == 'LTC':
-            LTC_holdings.append(lots[i])
-        elif lots[i][2] == 'ETH':
-            ETH_holdings.append(lots[i])
-    elif amt < 0:
-        if lots[i][2] == 'BTC,':
-            lots[i][2] = 'BTC'
-        elif lots[i][2] == 'LTC,':
-            lots[i][2] = 'LTC'
-        elif lots[i][2] == 'ETH,':
-            lots[i][2] = 'ETH'
-        reductions.append(lots[i])
-
 for commodity in holdings:     # Print lists of commodity holdings
     print '\n%s lots:' % (commodity)
     for i in range(len(holdings[commodity])):
         amt = float(holdings[commodity][i][1])
         print "holdings[%s][%s] %s %.8f %s %s" % (commodity, i, holdings[commodity][i][0], amt, commodity, holdings[commodity][i][3])
-                                              
-''' legacy code for displaying lots
-print "\n\nBitcoin (BTC) lots:"
-
-for i in range(len(BTC_holdings)):
-    amt = float(BTC_holdings[i][1])
-    BTC_holdings[i][1] = amt
-    print "BTC_holdings[%s] %s %.8f %s %s" % (i, BTC_holdings[i][0], BTC_holdings[i][1], BTC_holdings[i][2], BTC_holdings[i][3])
-
-if BTC_holdings == stack:
-    print "No lots to be reduced."
-    
-print "\nLitecoin (LTC) lots"
-
-for i in range(len(LTC_holdings)):
-    amt = float(LTC_holdings[i][1])
-    LTC_holdings[i][1] = amt
-    print "LTC_holdings[%s] %s %.8f %s %s" % (i, LTC_holdings[i][0], LTC_holdings[i][1], LTC_holdings[i][2], LTC_holdings[i][3])
-
-if LTC_holdings == stack:
-    print "No lots to be reduced."
-
-print "\nEther (ETH) lots:"
-
-for i in range(len(ETH_holdings)):
-    amt = float(ETH_holdings[i][1])
-    ETH_holdings[i][1] = amt
-    print "ETH_holdings[%s] %s %.8f %s %s" % (i, ETH_holdings[i][0], ETH_holdings[i][1], ETH_holdings[i][2], ETH_holdings[i][3])
-
-if ETH_holdings == stack:
-    print "No lots to be reduced."
-'''
 
 print "\nReductions to be applied:"
 for i in range(len(reductions)):
     redux_info = reductions_remaining(reductions, i)
     print '%s' % redux_info
-
-#for i in range(len(reductions)):
-#    date_r = reductions[i][0]
-#    reduction = float(reductions[i][1])
-#    unit_r = reductions[i][2]
-#    price_r = reductions[i][3]
-#    price_r = price_r[1:]
-#    price_r = price_r[:(len(price_r)-1)]
-#    print "reductions[%s] %s %.8f %s %s" % (i, date_r, reduction, unit_r, price_r)
 
 print "end comment"
 print
@@ -359,46 +293,35 @@ for i in range(len(lines)):
             # history data before 2013-04-28.
             if date < 2013-04-28:             
                 USDEUR, USDBTC, USDGBP, UAHUSD, JPYUSD, CHFUSD, XAUUSD, XAGUSD = float(rates[2]), float(rates[3]), float(rates[4]), float(rates[6]), float(rates[7]), float(rates[8]), float(rates[9]), float(rates[10])
-                print "P %s EUR %.4f USD" % (date, USDEUR)
-                print "P %s GBP %.4f USD" % (date, USDGBP)
-                print "P %s BTC %.4f USD" % (date, USDBTC)
-                # print "P %s USD %.4f UAH" % (date, UAHUSD)
-                # print "P %s USD %.4f JPY" % (date, JPYUSD)
-                # print "P %s USD %.4f CHF" % (date, CHFUSD)
-                # print "P %s XAU %.4f USD" % (date, 1/XAUUSD)
-                # print "P %s XAG %.4f USD\n" % (date, 1/XAGUSD)
+                print "P %s EUR %.2f USD" % (date, USDEUR)
+                print "P %s GBP %.2f USD" % (date, USDGBP)
+                print "P %s BTC %.2f USD            ; %.8f BTC/XAU" % (date, USDBTC, 1/(USDBTC/XAUUSD))
+                print "P %s XAU %.2f USD\n" % (date, XAUUSD)
             else:
                 USDEUR, USDBTC, USDGBP, USDLTC, UAHUSD, JPYUSD, CHFUSD, XAUUSD, XAGUSD = float(rates[2]), float(rates[3]), float(rates[4]), float(rates[5]), float(rates[6]), float(rates[7]), float(rates[8]), float(rates[9]), float(rates[10])
-                print "P %s EUR %.4f USD" % (date, USDEUR)
-                print "P %s GBP %.4f USD" % (date, USDGBP)
-                print "P %s BTC %.4f USD" % (date, USDBTC)
-                print "P %s LTC %.4f USD\n" % (date, USDLTC)
-                # print "P %s USD %.4f UAH" % (date, UAHUSD)
-                # print "P %s USD %.4f JPY" % (date, JPYUSD)
-                # print "P %s USD %.4f CHF" % (date, CHFUSD)
-                # print "P %s XAU %.4f USD" % (date, 1/XAUUSD)
-                # print "P %s XAG %.4f USD\n" % (date, 1/XAGUSD)
+                print "P %s EUR %.2f USD" % (date, USDEUR)
+                print "P %s GBP %.2f USD" % (date, USDGBP)
+                print "P %s BTC %.2f USD             ; %.8f BTC/XAU" % (date, USDBTC, 1/(USDBTC/XAUUSD))
+                print "P %s LTC %.2f USD" % (date, USDLTC)
+                print "P %s XAU %.2f USD\n" % (date, XAUUSD)
         except ValueError,e:
-            print "Error",e,"on line",i,"\n"
-                
+            print "; Error",e,"on line",i,"\n"
+
         tx_num = tx_num + 1
 
-    # Find postings which reduce crypto assets (i.e., where Assets:Crypto has a negative value) .
+    # Find postings which reduce crypto assets (i.e., where Assets:Crypto has a negative value)
+    # TODO replace 'Assets:Crypto' with query to generalize this commodity reduction script
     m = re.search(r'Assets:Crypto.*\s{1,}(-\d+(\.\d+)?)\s(BTC|ETH|LTC)', lines[i])
     if m:
         stack = []
-        if m.group(3) == 'BTC':        # Matches commodity lot to commodity found in journal file.
-            stack = BTC_holdings       # Assigns current commodity holdings to the "stack" variable.
-        elif m.group(3) == 'ETH':
-            stack = ETH_holdings
-        elif m.group(3) == 'LTC':
-            stack = LTC_holdings
-
+        commodity = m.group(3)         # Matches commodity lot to commodity found in journal file.
+        stack = holdings[commodity]    # Assigns current commodity holdings to the "stack" variable.
+        
         # Check that commodity symbols match, because one can't subtract APPL from ORANGE.
         if m.group(3) == stack[0][2]:
 
             # Check that reduction from ledger python bridge matches what the regex read from the journal file.
-            if float(m.group(1)) == float(reductions[0][1]):    
+            if float(reductions[0][1]) == float(m.group(1)):    
 
                 # Reduces lot and provides list of lot info 'linfo' variables to print results.
                 linfo = reduce_lot(stack, reductions)
@@ -445,12 +368,8 @@ for i in range(len(lines)):
             reductions = reductions[1:]
 
             # Update commodities holdings with reductions
-            if m.group(3) == 'BTC':
-                BTC_holdings = stack
-            elif m.group(3) == 'ETH':
-                ETH_holdings = stack
-            elif m.group(3) == 'LTC':
-                LTC_holdings = stack
+            holdings[commodity] = stack
+
         else:
             print "    ; UH OH: Symbols %s and %s don't match. See line %s in journal file." % (m.group(3), stack[0][2], i)
     else:                   # Switching cost basis prices to USD.
@@ -490,39 +409,19 @@ for i in range(len(lines)):
             
 print "\ncomment"
 
-sumBTC = sumETH = sumLTC = 0
-
-print "\nBitcoin (BTC) lots:"
-
-for i in range(len(BTC_holdings)):
-    BTC_holdings[i][1] = float(BTC_holdings[i][1])
-    sumBTC = sumBTC + BTC_holdings[i][1]
-    print "    %s %s %s %s" % (BTC_holdings[i][0], BTC_holdings[i][1], BTC_holdings[i][2], BTC_holdings[i][3])
-
-print "Total holdings: %s BTC" % sumBTC
-    
-print "\nEther (ETH) lots:"
-
-for i in range(len(ETH_holdings)):
-    ETH_holdings[i][1] = float(ETH_holdings[i][1])
-    sumETH = sumETH + ETH_holdings[i][1]
-    print "    %s %s %s %s" % (ETH_holdings[i][0], ETH_holdings[i][1], ETH_holdings[i][2], ETH_holdings[i][3])
-
-print "Total holdings: %s ETH" % sumETH
-    
-print "\nLitecoin (LTC) lots"
-
-for i in range(len(LTC_holdings)):
-    LTC_holdings[i][1] = float(LTC_holdings[i][1])
-    sumLTC = sumLTC + LTC_holdings[i][1]
-    print "    %s %s %s %s" % (LTC_holdings[i][0], LTC_holdings[i][1], LTC_holdings[i][2], LTC_holdings[i][3])
-
-print "Total holdings: %s LTC" % sumLTC
+for commodity in holdings:         # Print commodity lots and total holdings.
+    total = 0
+    print 'Remaining %s lots:' % commodity
+    for i in range(len(holdings[commodity])):
+        amt = float(holdings[commodity][i][1])
+        total = float(total) + amt
+        print "%s %f %s %s" % (holdings[commodity][i][0], amt, commodity, holdings[commodity][i][3])
+    print 'Total holdings: %f %s.\n' % (float(total), commodity)
 
 if is_empty(reductions):
     print "    All lots have been reduced.\n"
 else:
-    print "\nReductions to be applied:"
+    print "Reductions to be applied:"
     for i in range(len(reductions)):
         redux_info = reductions_remaining(reductions, i)
         print '%s' % redux_info
