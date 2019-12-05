@@ -20,26 +20,37 @@ $ python TaxingLots.py 'filename' Assets:Crypto
 
 Globably, this program:
 
- 1. Reads a ledger journal 'filename', queries for reductions of any
+ 0. Reads a ledger journal 'filename', queries for reductions of any
     assets under Assets:Crypto, and returns matching posts using the
     python ledger bridge, which must be compiled with your version of
     ledger. Its output defaults to sdout, so it never modifies its imput
     files. Your ledger journal must be sorted by date.
 
- 2. Creates a list "stack" of commodity lots with dates and cost basis.
+ 1. Creates a list "stack" of commodity lots with dates and cost basis.
     Currently it handles bitcoin (BTC), litecoin (LTC), and ether (ETH),
     reducing from the oldest lot of each commodity first (First In, First
     Out, FIFO).
 
- 3. Reads the ledger line by line, outputing to stout.
+ 2. Reads the ledger line by line, outputing to stout.
     A. If a line has commodity reductions matching the query,
        the lot sales are reduced agains holdings in the "stack" of lots
        for that particular commodity.
     B. The resulting ledger notation is inserted in the line (or lines
        when multiple lots are booked against) and printed to stdout.
-    C. Output currently assumes USD as reference currency for all lot cost
-       basis calculations, to keep the IRS happy.
-        
+    C. Print lines not reducing a commodity directly to stdout, making the
+       following slight modifications:
+        1) For each transaction's date, print historic exchange rates
+           above the transaction, and add a commented transaction number
+        2) Convert non-USD postings to USD, and insert comment with
+           original posting amount and currency or commodity. I have to
+           use USD as my reference currency for my US taxes.
+
+ 3. Prefaces output with ledger comments listing the crypto lots to be
+    reduced. Follows output with ledger comments listing remaining lots
+    held and cumulative capital gains in USD (recall in the standard
+    accounting equation, income is negative, thus capital gains are negative
+    and capital losses are positive.
+
 Notes:
 
 Ledger is a powerful, double-entry accounting system that is accessed from the
