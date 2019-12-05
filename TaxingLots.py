@@ -66,10 +66,7 @@ control of the overall transaction structure.
 The program requires a CSV file with exchange rates for all commodities. Modify
 the getrates() function according to your needs and your rates file.
 
-The program also inserts Income:CapitalGains legs where necessary when reducing
-lots. This gives Ledger the CapitalGains explicitly, so when you run TaxingLot's
-output back through Ledger, you may have to manually adjust some transactions due
-to currency exchange rate losses and/or gains.
+The program also inserts Income:CapitalGains legs where necessary when reducing lots. This gives Ledger the CapitalGains explicitly, so when you run TaxingLot's output back through Ledger, you may have to manually adjust some transactions due to currency exchange rate losses and/or gains.
 
 I keep my ledger file in the actual currencies or cryptocurrencies that I
 transact in. With this program, I can convert to USD to calculate and report
@@ -118,7 +115,11 @@ def convert_to_USD(foreign):
 
 def strip_AZ(cstring):
     """Given a string, removes initial & final ('A' & 'Z') character from a
-    string, returns string."""
+    string, returns string.
+
+    This little function removes the curly braces from Ledger's price info.
+    E.g., "{417.50 EUR}" would become "417.50 EUR"."""
+    
     cstring = cstring[1:]
     cstring = cstring[:(len(cstring)-1)]
     return cstring
@@ -141,7 +142,7 @@ def reduce_lot(stack, reductions):
     lot_date, lot, lot_unit, lot_price = stack[0][0], float(stack[0][1]), stack[0][2], float(convert_to_USD(strip_AZ(stack[0][3])))
 
     reduction_date, reduction, reduction_unit = reductions[0][0], abs(float(reductions[0][1])), reductions[0][2] 
-    original_reduction_price = strip_AZ(reductions[0][3])
+    original_reduction_price = strip_AZ(reductions[0][3])   
     original_reduction_unit = original_reduction_price.split(' ')
     original_reduction_unit = original_reduction_unit[1]
 
@@ -246,14 +247,13 @@ for post in ledger.read_journal(filename).query(query):
         s = '%s %s %s' % (date, amount, post.account)
     print s
 
-    s = s.split(' ')
+    s = list(s.split(' '))
     if len(s) == 7:
-        s[3] = "%s %s" % (s[3], s[4])
-        s[:-2]
-    s = list(s)
+        s[3] = "%s %s" % (s[3], s[4])  # Combine amount and unit in {}
+        del s[4:6]                     # Remove redundant unit and date
     
-    if commodity in holdings:        # Fill holdings with positive commodity
-        if commodity == s[2]:        # postings. Reductions sorted out. 
+    if commodity in holdings:          # Fill holdings with positive commodity
+        if commodity == s[2]:          # postings. Reductions sorted out. 
             amt = float(s[1])
             if amt > 0:
                 holdings[commodity].append(s)
