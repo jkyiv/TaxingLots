@@ -223,6 +223,18 @@ print("\nQuerying %r via the ledger bridge.\n") % filename
 # s[0] is date, s[1] is amount, s[2] unit, s[3] price, s[4] account
 # "holdings" is a dictionary with commodity symbols for keys, and each
 # value is a list of s strings from the postings.
+#
+# For altcoins, your ledger journal file must present them relative to
+# bitcoin. For example,
+#
+#    2016-11-10 * ether sale                                                         
+#        Assets:Crypto:Ether                 -42.5 ETH                               
+#        Assets:Crypto:Bitcoin               1.0375 BTC
+#
+# shows that the ether in terms of bitcoin, which will result in a reduction
+# lot of "2016-11-10 -42.50000000 ETH {0.0244117647058823529 BTC}". This
+# is due to a lack of reliabale altcoin to USD exchange data, so we use
+# bitcoin as the reference currency.
 
 print "%s" % (query)
 
@@ -363,7 +375,7 @@ for i in range(len(lines)):
                     linfo = reduce_lot(stack, reductions)
                     lot_date, lot, lot_unit, lot_price, reduction_date, reduction, reduction_unit, original_reduction_price, reduction_price, reduction_account, updated_lot, original_reduction_unit = linfo[0], linfo[1], linfo[2], linfo[3], linfo[4], linfo[5], linfo[6], linfo[7], linfo[8], linfo[9], linfo[10], linfo[11]
 
-            print "    %s    -%.8f %s {%.2f USD} [%s] @ %.2f USD" % (reduction_account, reduction, reduction_unit, lot_price, lot_date, reduction_price)
+            print "    %s    -%.8f %s {%.2f USD} [%s] @ %.2f USD  ; <-- reduction_price" % (reduction_account, reduction, reduction_unit, lot_price, lot_date, reduction_price)
             if original_reduction_unit != 'USD':
                 print "    ; Reduction price converted from @ %s" % (original_reduction_price)
             print "    ; Lot size remaining: %.8f %s - %s %s (reduction) = %s %s" % (lot, lot_unit, reduction, reduction_unit, updated_lot, lot_unit)

@@ -44,8 +44,8 @@ P 2016-01-05 GBP 1.4677390947 USD
     Assets:Crypto:Bitcoin               -1.00 BTC 
 
 2016-11-10 * ether sale
-    Assets:Crypto:Bitcoin               1.0375 BTC
     Assets:Crypto:Ether                 -42.5 ETH
+    Assets:Crypto:Bitcoin               1.0375 BTC
 
 2016-11-13 * ether purchase
     Assets:Crypto:Ether                 43.40 ETH
