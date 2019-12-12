@@ -284,7 +284,7 @@ print "\nReductions to be applied:"
 for i in range(len(reductions)):
     redux_info = reductions_remaining(reductions, i)
     print '%s' % redux_info
-
+    
 print "end comment"
 print
 
@@ -301,9 +301,10 @@ USDEUR = USDBTC = USDGBP = USDLTC = UAHUSD = JPYUSD = CHFUSD = XAUUSD = XAGUSD =
 
 for i in range(len(lines)):
     # For each date in ledger file, assigns conversion rate variables relative to USD
-    m = re.search(r'(^(\d{4}-\d{2}-\d{2}))', lines[i])
+    m = re.search(r'(^(\d{4}-\d{2}-\d{2}).*)\n', lines[i])
+    # re.search(r'(^(\d{4}-\d{2}-\d{2}))', lines[i])
     if m:
-        date = m.group(1)
+        date = m.group(2)
         # USD/EUR = rates[2], USD/BTC = rates[3], USD/GBP = rates[4],
         # USD/LTC = rates[5], UAH/USD = rates[6], JPY/USD = rates[7],
         # CHF/USD = rates[8], XAU/USD = rates[9], XAG/USD = rates[10],
@@ -331,7 +332,8 @@ for i in range(len(lines)):
             print "; Error",e,"on line",i,"\n"
 
         tx_num = tx_num + 1
-
+        print "%s           ; Transaction No. %s" % (m.group(1), tx_num)
+        
     # Find postings which reduce crypto assets (i.e., where Assets:Crypto has a negative value)
     # TODO replace 'Assets:Crypto' with query to generalize this commodity reduction script
     m = re.search(r'Assets:Crypto.*\s{1,}(-\d+(\.\d+)?)\s(BTC|ETH|LTC)', lines[i])
@@ -404,7 +406,7 @@ for i in range(len(lines)):
         m3b = re.search(r'(Assets:Crypto:LTC\s{1,}((\d+(\.\d+)?)\sLTC))', lines[i])
         m4 = re.search(r'(Income:CapitalGains)', lines[i])
         if m:
-            print "%s           ; Transaction No. %s" % (m.group(1), tx_num)
+            pass   #            print "%s           ; Transaction No. %s" % (m.group(1), tx_num)
         elif m1a:
             USDETH = convert_to_USD(m1a.group(4))                  # Converts ETH price in BTC to price in USD
             print "    %s%.2f USD     ; Originally @ %s BTC" % (m1a.group(1), USDETH, m1a.group(5)) 
