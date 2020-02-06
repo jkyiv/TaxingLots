@@ -156,7 +156,7 @@ def reduce_lot(stack, reductions):
 
 def display_commodity(commodity):
     """Given a commodity symbol, determines decimal precision """
-    # TODO learn better way to do this
+    # TODO learn better way to do this (2019-10-15)
     is_fiat = {'EUR','GBP','UAH','CHF','JPY','USD'}
     is_crypto = {'BTC','LTC','ETH'}
     is_commodity ={'XAU','XAG'}
@@ -228,13 +228,13 @@ print("\nQuerying %r via the ledger bridge.\n") % filename
 # bitcoin. For example,
 #
 #    2016-11-10 * ether sale                                                         
-#        Assets:Crypto:Ether                 -42.5 ETH                               
-#        Assets:Crypto:Bitcoin               1.0375 BTC
+#        Assets:Crypto:Ether                 -40.0 ETH
+#        Assets:Crypto:Bitcoin               1.000 BTC
 #
 # shows that the ether in terms of bitcoin, which will result in a reduction
-# lot of "2016-11-10 -42.50000000 ETH {0.0244117647058823529 BTC}". This
-# is due to a lack of reliabale altcoin to USD exchange data, so we use
-# bitcoin as the reference currency.
+# lot of "2016-11-10 -40.00000000 ETH {0.025 BTC}". This is due to a lack of
+# reliable altcoin to USD exchange data, so we use bitcoin as the reference
+# currency.
 
 print "%s" % (query)
 
