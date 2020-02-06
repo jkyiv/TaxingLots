@@ -8,7 +8,7 @@ import re
 import ledger
 import getrates
 
-'''Queries a journal for lots, reduces them, & returns ledger-format lot reductions to sdout.
+'''Queries journal for lots, reduces them, & returns lot reductions to sdout.
 
 $ python TaxingLots.py 'filename' Assets:Crypto
 
@@ -66,7 +66,10 @@ control of the overall transaction structure.
 The program requires a CSV file with exchange rates for all commodities. Modify
 the getrates() function according to your needs and your rates file.
 
-The program also inserts Income:CapitalGains legs where necessary when reducing lots. This gives Ledger the CapitalGains explicitly, so when you run TaxingLot's output back through Ledger, you may have to manually adjust some transactions due to currency exchange rate losses and/or gains.
+The program also inserts Income:CapitalGains legs where necessary when reducing
+lots. This gives Ledger the CapitalGains explicitly, so when you run
+TaxingLot's output back through Ledger, you may have to manually adjust some
+transactions due to currency exchange rate losses and/or gains.
 
 I keep my ledger file in the actual currencies or cryptocurrencies that I
 transact in. With this program, I can convert to USD to calculate and report
