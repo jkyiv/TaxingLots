@@ -1,0 +1,56 @@
+2016-10-01 bitcoin purchase
+    Assets:Crypto:Bitcoin               0.50 BTC @ 450 USD
+    Assets:Checking:US           -225 USD
+
+2016-10-03 * Create offer fee
+    Expenses:Fees:Crypto      0.0005 BTC @@ 0.20875 EUR
+    Assets:Crypto:Bitcoin               -0.0005 BTC @ 417.50 EUR
+
+2016-10-06 * bitcoin purchase
+    Expenses:Fees:Fiat                  4.00 USD
+    Assets:Crypto:Bitcoin               0.75 BTC @ 800.00 USD 
+    Assets:Checking:US               -604.00 USD
+
+P 2016-01-05 GBP 1.4677390947 USD
+
+2016-10-08 * bitcoin purchase
+    Expenses:Fees:Fiat                  1.36 GBP
+    Assets:Crypto:Bitcoin              0.375 BTC @ 362.41 GBP
+    Assets:Checking:UK           -137.26 GBP
+
+2016-10-11 * bitcoin purchase
+    Expenses:Fees:Fiat                  0.40 USD
+    Assets:Crypto:Bitcoin               0.073762 BTC @ 541.20 USD
+    Assets:Checking:US            -40.32 USD
+
+2016-10-13 * Create offer fee
+    Expenses:Fees:Crypto      0.0005 BTC @ 485.00 EUR
+    Assets:Crypto:Bitcoin               -0.0005 BTC @ 485.00 EUR
+
+2016-10-13 * Network fee
+    Expenses:Fees:Crypto:Network        0.0002 BTC @ 560.00 USD
+    Assets:Crypto:Bitcoin               -0.0002 BTC @ 560.00 USD
+
+2016-10-26 * bitcoin sale
+    Assets:Checking:EU                   360 EUR
+    Assets:Crypto:Bitcoin               -0.75 BTC @ 480.00 EUR
+
+2016-11-01 * bitcoin purchase
+    Assets:Crypto:Bitcoin              1.2 BTC
+    Assets:Checking:EU                -660 EUR
+
+2016-11-07 * ether purchase
+    Assets:Crypto:Ether                 43.53 ETH
+    Assets:Crypto:Bitcoin               -1.00 BTC 
+
+2016-11-10 * ether sale
+    Assets:Crypto:Ether                 -42.5 ETH
+    Assets:Crypto:Bitcoin               1.0375 BTC
+
+2016-11-13 * ether purchase
+    Assets:Crypto:Ether                 43.40 ETH
+    Assets:Crypto:Bitcoin               -1.0375 BTC 
+    
+2016-11-27 * ether sale
+    Assets:Crypto:Ether                 -43.40 ETH
+    Assets:Crypto:Bitcoin               1.054 BTC 
