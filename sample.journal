@@ -9,8 +9,8 @@
 
 2016-10-06 * bitcoin purchase
     Expenses:Fees:Fiat                  3.99 USD
-    Assets:Crypto:Bitcoin               0.75 BTC @ 531.93 USD
-    Assets:Checking:US           -402.94 USD
+    Assets:Crypto:Bitcoin               0.75 BTC @ 400.00 USD
+    Assets:Checking:US           -303.99 USD
 
 P 2016-01-05 GBP 1.4677390947 USD
 
@@ -21,8 +21,8 @@ P 2016-01-05 GBP 1.4677390947 USD
 
 2016-10-11 * bitcoin purchase
     Expenses:Fees:Fiat                  0.40 USD
-    Assets:Crypto:Bitcoin               0.073762 BTC @ 541.20 USD
-    Assets:Checking:US            -40.32 USD
+    Assets:Crypto:Bitcoin               0.075 BTC @ 540.00 USD
+    Assets:Checking:US            -40.90 USD
 
 2016-10-13 * Create offer fee
     Expenses:Fees:Crypto      0.0005 BTC @ 485.00 EUR
@@ -58,8 +58,8 @@ P 2016-01-05 GBP 1.4677390947 USD
 
 2016-11-04 * bitcoin purchase
     Expenses:Fees:Fiat                  3.75 USD
-    Assets:Crypto:Bitcoin               0.7 BTC @ 535.25 USD
-    Assets:Checking:US           -378.43 USD
+    Assets:Crypto:Bitcoin               0.7 BTC @ 535.50 USD
+    Assets:Checking:US           -378.60 USD
 
 2016-11-07 * ether purchase
     Assets:Crypto:Ether                 43.53 ETH
