@@ -1,3 +1,8 @@
+2020-02-07 WIP - I'm updating to Python 3.7, and currently (i.e., if this note
+is still here) my script isn't fully working. Sorry. I hope to fix it soon.
+
+--
+
 Querys a journal for lots, reduces them, & returns ledger-format lot reductions to sdout.
 
 $ python TaxingLots.py 'filename' 'query'
