@@ -10,9 +10,11 @@ import getrates
 
 '''Queries journal for lots, reduces them, & returns lot reductions to sdout.
 
-$ python TaxingLots.py 'filename' Assets:Crypto
+$ python TaxingLots.py 'filename' Assets:Crypto [-d]
 
     filename  -- a ledger file, entries sorted by date
+
+    [-d]      -- turn on debuging / verbose output
 
 [NOT IMPLEMENTED YET:
     query     -- generic ledger query to augment or reduce commodities
@@ -85,7 +87,7 @@ Writen by Joel Swanson. Version 0.03. Copyright 2017-2019. Licensed under
 the GNU General Public License (GPL) Version 3. Absolutely no warranty,
 this program provided 'as is'. See https://www.gnu.org/licenses/gpl.html.'''
 
-script, filename, query = argv
+script, filename, query, opt = argv
 
 def convert_to_USD(foreign):
     """Converts lot pricing to USD. Takes string "[amount] [commodity symbol]", returns list of amount and rate in USD"""
@@ -239,7 +241,7 @@ print("\nQuerying %r via the ledger bridge.\n") % filename
 # reliable altcoin to USD exchange data, so we use bitcoin as the reference
 # currency.
 
-print("%s" % (query))
+print('%s' % (query))
 
 holdings = {}    # keys: commodity symbols; values: commodity postings
 reductions = []  # commodity postings to be reduced from holdings
@@ -298,6 +300,7 @@ print
 f = open(filename)
 lines = []
 lines = f.readlines()
+
 tx_num = 0
 date = '2009-01-03'    # sample date to turn 'date'into a global variable; also the date of the Bitcoin genesis block.
 USDEUR = USDBTC = USDGBP = USDLTC = UAHUSD = JPYUSD = CHFUSD = XAUUSD = XAGUSD = CNYBTC= 0.0   # initialize all rates.
@@ -332,7 +335,7 @@ for i in range(len(lines)):
                 print("P %s LTC %.2f USD" % (date, USDLTC))
                 print("P %s XAU %.2f USD\n" % (date, XAUUSD))
         except ValueError:
-            print("; Error",e,"on line",i,"\n")
+            print("    ; Error on line %s \n" % (i))
 
         tx_num = tx_num + 1
         print("%s           ; Transaction No. %s" % (m.group(1), tx_num))
@@ -347,6 +350,12 @@ for i in range(len(lines)):
         
         # Check that commodity symbols match, because one can't subtract APPL from ORANGE.
         if m.group(3) == stack[0][2]:
+            if '-d' == opt:
+                print('          ; DEBUG \'show reductions\'')
+                for i in range(len(stack)):
+                    for j in range(len(stack[i])):
+                        print('          ;   stack[%s][%s]: %s' % (i, j, stack[i][j]))
+                print('          ; END DEBUG\n')
 
             # Check that reduction from ledger python bridge matches what the regex read from the journal file.
             if float(reductions[0][1]) == float(m.group(1)):    
@@ -359,9 +368,10 @@ for i in range(len(lines)):
                 while updated_lot <= 0:
                       
                     print("    %s    -%.8f %s {%.2f USD} [%s] (lot cleared) @ %.2f USD" % (reduction_account, lot, reduction_unit, lot_price, lot_date, reduction_price))
-                    if original_reduction_unit != 'USD':
-                        print("    ; Reduction price converted from @ %s" % (original_reduction_price))
-                    print("    ; Lot size remaining: %.8f %s - %s %s (reduction) = %s %s" % (lot, lot_unit, reduction, reduction_unit, updated_lot, lot_unit))
+                    if '-d' == opt:
+                        if original_reduction_unit != 'USD':
+                            print("    ; Reduction price converted from @ %s" % (original_reduction_price))
+                        print("    ; Lot size remaining: %.8f %s - %.8f %s (reduction) = %s %s" % (lot, lot_unit, reduction, reduction_unit, updated_lot, lot_unit))
 
                     duration = duration_held(lot_date, reduction_date)
 
@@ -381,9 +391,10 @@ for i in range(len(lines)):
                     lot_date, lot, lot_unit, lot_price, reduction_date, reduction, reduction_unit, original_reduction_price, reduction_price, reduction_account, updated_lot, original_reduction_unit = linfo[0], linfo[1], linfo[2], linfo[3], linfo[4], linfo[5], linfo[6], linfo[7], linfo[8], linfo[9], linfo[10], linfo[11]
 
             print("    %s    -%.8f %s {%.2f USD} [%s] @ %.2f USD" % (reduction_account, reduction, reduction_unit, lot_price, lot_date, reduction_price))
-            if original_reduction_unit != 'USD':
-                print("    ; Reduction price converted from @ %s" % (original_reduction_price))
-            print("    ; Lot size remaining: %.8f %s - %s %s (reduction) = %s %s" % (lot, lot_unit, reduction, reduction_unit, updated_lot, lot_unit))
+            if '-d' == opt:
+                if original_reduction_unit != 'USD':
+                    print("    ; Reduction price converted from @ %s" % (original_reduction_price))
+                print("    ; Lot size remaining: %.8f %s - %.8f %s (reduction) = %s %s" % (lot, lot_unit, reduction, reduction_unit, updated_lot, lot_unit))
 
             duration = duration_held(lot_date, reduction_date)
 
@@ -409,7 +420,7 @@ for i in range(len(lines)):
         m3b = re.search(r'(Assets:Crypto:LTC\s{1,}((\d+(\.\d+)?)\sLTC))', lines[i])
         m4 = re.search(r'(Income:CapitalGains)', lines[i])
         if m:
-            pass   #            print "%s           ; Transaction No. %s" % (m.group(1), tx_num)
+            pass   #            print('%s           ; Transaction No. %s' % (m.group(1), tx_num))
         elif m1a:
             USDETH = convert_to_USD(m1a.group(4))                  # Converts ETH price in BTC to price in USD
             print("    %s%.2f USD     ; Originally @ %s BTC" % (m1a.group(1), USDETH, m1a.group(5)))
@@ -433,7 +444,8 @@ for i in range(len(lines)):
         elif m4:
             pass
         else:
-            print("%s" % lines[i],)
+            lines[i] = lines[i].rstrip()  # remove '\n' from lines
+            print(lines[i])
             
 print("\ncomment")
 
