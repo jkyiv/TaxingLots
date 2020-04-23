@@ -199,6 +199,8 @@ def capital_gains(amt, bought_at, sold_at):
 
 def gains_info(amt, bought_at, sold_at, duration):
     """Determines whether gains are long or short-term. Returns gains info in ledger format. """
+    # TODO (2020-04-23): Fix/Clean up this function
+    # accumulating gains inside this function isn't a pure function.
     
     if duration < 0:
         info = "    ; You can't reduce from a future lot."
