@@ -335,7 +335,7 @@ for i in range(len(lines)):
                 print("P %s LTC %.2f USD" % (date, USDLTC))
                 print("P %s XAU %.2f USD\n" % (date, XAUUSD))
         except ValueError:
-            print("    ; Error on line %s \n" % (i))
+            print("comment\n    ; Error on line %s \nend comment" % (i))
 
         tx_num = tx_num + 1
         print("%s           ; Transaction No. %s" % (m.group(1), tx_num))
