@@ -106,22 +106,22 @@ P 2016-01-05 GBP 1.4677390947 USD
     Assets:Crypto:Litecoin            -3.375 LTC @ 0.064 BTC
     Assets:Crypto:Bitcoin              0.216 BTC
     
-2016-12-14 * bitcoin purchase
+2017-12-14 * bitcoin purchase
     Assets:Crypto:Bitcoin        1.0000 BTC
     Assets:Checking:US          -872.92 USD
 
-2016-12-17 * bitcoin sale
+2017-12-17 * bitcoin sale
     Assets:Crypto:Bitcoin  -0.5000 BTC
     Assets:Checking:EU     421.17 EUR
 
-2016-12-20 * bitcoin purchase
+2017-12-20 * bitcoin purchase
     Assets:Crypto:Bitcoin        0.3400 BTC
     Assets:Checking:US          -295.80 USD
 
-2016-12-24 * bitcoin sale
+2017-12-24 * bitcoin sale
     Assets:Crypto:Bitcoin  -0.6100 BTC @ 909.327868852 EUR
     Assets:Checking:EU     554.69 EUR
 
-2016-12-26 Boxing day bitcoin sale
+2017-12-26 Boxing day bitcoin sale
     Assets:Checking:EU      2429.96 EUR
     Assets:Crypto:Bitcoin    -2.6 BTC @ 934.6 EUR
