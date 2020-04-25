@@ -10,11 +10,11 @@ import getrates
 
 '''Queries journal for lots, reduces them, & returns lot reductions to sdout.
 
-$ python TaxingLots.py 'filename' Assets:Crypto [-d]
+$ python TaxingLots.py 'filename' Assets:Crypto [-d,-v]
 
     filename  -- a ledger file, entries sorted by date
 
-    [-d]      -- turn on debuging / verbose output
+    [-d][-v]  -- turn on debuging / verbose output
 
 [NOT IMPLEMENTED YET:
     query     -- generic ledger query to augment or reduce commodities
@@ -201,14 +201,14 @@ def cap_gains(amt, bought_at, sold_at):
 
 def lprint_gains(amt, bought_at, sold_at, duration):
     """Determines whether gains are long or short-term. Returns gains info in ledger format. """
-    # TODO (2020-04-23): Fix/Clean up this function
-    # accumulating gains inside this function isn't a pure function.
+    # TODO (2020-04-23): Fix this function. Move gains accumulation
+    # elsewhere, and add split between long-term and short-term gains.
     
     if duration < 0:
         info = "    ; You can't reduce from a future lot."
     elif duration > 365:
         long_term_gains = cap_gains(amt, bought_at, sold_at)
-        gains.append(long_term_gains)
+        gainsLT.append(long_term_gains)
         info = "    Income:CapitalGainsLT       %.2f USD    ; Held for %.0f days: long-term gains/losses apply." % (long_term_gains, duration)
     else:
         short_term_gains = cap_gains(amt, bought_at, sold_at)
@@ -250,7 +250,8 @@ print('%s' % (query))
 holdings = {}    # keys: commodity symbols; values: commodity postings
 reductions = []  # commodity postings to be reduced from holdings
 stack = []       # hold whichever cryptocurrency is actively being reduced
-gains = []       # accumulate capital gains from lprint_gains()
+gains = []       # accumulate capital gains from lprint_gains(
+gainsLT = []     # accumulate long-term gains from lprint_gains()
 
 for post in ledger.read_journal(filename).query(query):
     s = "%s %s %s" % (post.date, post.amount, post.account)
@@ -466,10 +467,14 @@ else:
         redux_info = reductions_remaining(reductions, i)
         print('%s' % redux_info)
 
-capitalgains = 0
+capitalgains = capitalgainsLT = 0
 for i in range(len(gains)):
     capitalgains = capitalgains + gains[i]
-
-print("Capital gains: %.2f USD." % capitalgains)
+for i in range(len(gainsLT)):
+    capitalgainsLT = capitalgains + gainsLT[i]
+if capitalgains is not 0:
+    print("Short-term capital gains: %.2f USD." % capitalgains)
+if capitalgainsLT is not 0:
+    print("Long-term capital gains: %.2f USD." % capitalgainsLT)
 
 print("end comment\n")
