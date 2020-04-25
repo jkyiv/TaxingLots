@@ -155,7 +155,9 @@ def reduce_lot(stack, reductions):
             
     updated_lot = lot - reduction
 
-    lot_info = [lot_date, lot, lot_unit, lot_price, reduction_date, reduction, reduction_unit, original_reduction_price, reduction_price, reduction_account, updated_lot, original_reduction_unit]
+    duration = duration_held(lot_date, reduction_date)
+
+    lot_info = [lot_date, lot, lot_unit, lot_price, reduction_date, reduction, reduction_unit, original_reduction_price, reduction_price, reduction_account, updated_lot, original_reduction_unit, duration]
 
     return lot_info
 
@@ -189,15 +191,15 @@ def duration_held(purchase_date, sale_date):
     duration = (selldate - buydate).days
     return duration
 
-def capital_gains(amt, bought_at, sold_at):
+def cap_gains(amt, bought_at, sold_at):
     """Given three numbers (an amount, a buy price, and a sell price), returns gains as income.
 
-    In the standard account equation, income is negative, and that convention is followed. """
+    In the standard accounting equation, income is negative, and that convention is followed. """
     amt, bought_at, sold_at = float(amt), float(bought_at), float(sold_at)
     gains = (bought_at * amt) - (sold_at * amt)
     return gains
 
-def gains_info(amt, bought_at, sold_at, duration):
+def lprint_gains(amt, bought_at, sold_at, duration):
     """Determines whether gains are long or short-term. Returns gains info in ledger format. """
     # TODO (2020-04-23): Fix/Clean up this function
     # accumulating gains inside this function isn't a pure function.
@@ -205,11 +207,11 @@ def gains_info(amt, bought_at, sold_at, duration):
     if duration < 0:
         info = "    ; You can't reduce from a future lot."
     elif duration > 365:
-        long_term_gains = capital_gains(amt, bought_at, sold_at)
+        long_term_gains = cap_gains(amt, bought_at, sold_at)
         gains.append(long_term_gains)
         info = "    Income:CapitalGainsLT       %.2f USD    ; Held for %.0f days: long-term gains/losses apply." % (long_term_gains, duration)
     else:
-        short_term_gains = capital_gains(amt, bought_at, sold_at)
+        short_term_gains = cap_gains(amt, bought_at, sold_at)
         gains.append(short_term_gains)
         info = "    Income:CapitalGains          %.2f USD" % short_term_gains
     return info
@@ -248,7 +250,7 @@ print('%s' % (query))
 holdings = {}    # keys: commodity symbols; values: commodity postings
 reductions = []  # commodity postings to be reduced from holdings
 stack = []       # hold whichever cryptocurrency is actively being reduced
-gains = []       # accumulate capital gains from gains_info()
+gains = []       # accumulate capital gains from lprint_gains()
 
 for post in ledger.read_journal(filename).query(query):
     s = "%s %s %s" % (post.date, post.amount, post.account)
@@ -364,7 +366,7 @@ for i in range(len(lines)):
 
                 # Reduces lot and provides list of lot info 'linfo' variables to print results.
                 linfo = reduce_lot(stack, reductions)
-                lot_date, lot, lot_unit, lot_price, reduction_date, reduction, reduction_unit, original_reduction_price, reduction_price, reduction_account, updated_lot, original_reduction_unit  = linfo[0], linfo[1], linfo[2], linfo[3], linfo[4], linfo[5], linfo[6], linfo[7], linfo[8], linfo[9], linfo[10], linfo[11]
+                lot_date, lot, lot_unit, lot_price, reduction_date, reduction, reduction_unit, original_reduction_price, reduction_price, reduction_account, updated_lot, original_reduction_unit, duration = linfo[0], linfo[1], linfo[2], linfo[3], linfo[4], linfo[5], linfo[6], linfo[7], linfo[8], linfo[9], linfo[10], linfo[11], linfo[12]
 
                 # Does reduction exceed size of lot? If so, clear lot & remove cleared lot from stack,
                 while updated_lot <= 0:
@@ -375,9 +377,7 @@ for i in range(len(lines)):
                             print("    ; Reduction price converted from @ %s" % (original_reduction_price))
                         print("    ; Lot size remaining: %.8f %s - %.8f %s (reduction) = %s %s" % (lot, lot_unit, reduction, reduction_unit, updated_lot, lot_unit))
 
-                    duration = duration_held(lot_date, reduction_date)
-
-                    print("%s" % gains_info(lot, lot_price, reduction_price, duration))
+                    print("%s" % lprint_gains(lot, lot_price, reduction_price, duration))
                     
                     if is_empty(stack):
                         print("    ; No more %s lots to reduce, 'stack' is empty." % lot_unit)
@@ -390,7 +390,7 @@ for i in range(len(lines)):
                     reductions[0][1] = updated_lot
                     
                     linfo = reduce_lot(stack, reductions)
-                    lot_date, lot, lot_unit, lot_price, reduction_date, reduction, reduction_unit, original_reduction_price, reduction_price, reduction_account, updated_lot, original_reduction_unit = linfo[0], linfo[1], linfo[2], linfo[3], linfo[4], linfo[5], linfo[6], linfo[7], linfo[8], linfo[9], linfo[10], linfo[11]
+                    lot_date, lot, lot_unit, lot_price, reduction_date, reduction, reduction_unit, original_reduction_price, reduction_price, reduction_account, updated_lot, original_reduction_unit, duration = linfo[0], linfo[1], linfo[2], linfo[3], linfo[4], linfo[5], linfo[6], linfo[7], linfo[8], linfo[9], linfo[10], linfo[11], linfo[12]
 
             print("    %s    -%.8f %s {%.2f USD} [%s] @ %.2f USD" % (reduction_account, reduction, reduction_unit, lot_price, lot_date, reduction_price))
             if '-d' == opt:
@@ -398,9 +398,7 @@ for i in range(len(lines)):
                     print("    ; Reduction price converted from @ %s" % (original_reduction_price))
                 print("    ; Lot size remaining: %.8f %s - %.8f %s (reduction) = %s %s" % (lot, lot_unit, reduction, reduction_unit, updated_lot, lot_unit))
 
-            duration = duration_held(lot_date, reduction_date)
-
-            print("%s" % gains_info(reduction, lot_price, reduction_price, duration))
+            print("%s" % lprint_gains(reduction, lot_price, reduction_price, duration))
 
             # Sets remainder of lot reduction as amount in next held lot.
             stack[0][1] = updated_lot
