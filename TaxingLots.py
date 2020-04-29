@@ -419,6 +419,7 @@ for i in range(len(lines)):
         m3 = re.search(r'((Assets|Expenses|Liabilities).*\s{1,})((-?\d+(\.\d+)?)\s(EUR|GBP))', lines[i])
         m3a = re.search(r'(Expenses:Fees.*\s{1,})((\d+(\.\d+)?)\s(BTC|LTC))', lines[i])
         m3b = re.search(r'(Assets:Crypto:LTC\s{1,}((\d+(\.\d+)?)\sLTC))', lines[i])
+        m3c = re.search(r'((Expenses|Liabilities).*\s{1,})((\d+(\.\d+)?)\s(BTC|LTC))', lines[i])
         m4 = re.search(r'(Income:CapitalGains)', lines[i])
         if m:
             pass   #            print('%s           ; Transaction No. %s' % (m.group(1), tx_num))
@@ -442,6 +443,15 @@ for i in range(len(lines)):
                 print('%s @ %.2f USD' % (lines[i][:-1], USDLTC))
         elif m3b:
             print('%s @ %s USD' % (lines[i][:-1], USDLTC))
+        # TODO (2020-04-25) debug m3c (hopefully it should add the USD rate for postings
+        # like 2013-12-13 Expenses:Unknown    0.0003 BTC. Currently 
+        elif m3c:
+            if m3c.group(6) == 'BTC':
+                USDBTC = convert_to_USD(m3c.group(3))
+                print("    %s%.2f USD     ; Originally @ %s BTC" % (m3c.group(1), USDBTC, m3c.group(4)))
+            elif m3c.group(6) == 'LTC':
+                USDLTC = convert_to_USD(m3c.group(3))
+                print("    %s%.2f USD     ; Originally @ %s LTC" % (m3c.group(1), USDLTC, m3c.group(4)))
         elif m4:
             pass
         else:
