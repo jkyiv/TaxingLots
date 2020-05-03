@@ -372,7 +372,7 @@ for i in range(len(lines)):
                 # Does reduction exceed size of lot? If so, clear lot & remove cleared lot from stack,
                 while updated_lot <= 0:
                       
-                    print("    %s    -%.8f %s {%.2f USD} [%s] (lot cleared) @ %.2f USD" % (reduction_account, lot, reduction_unit, lot_price, lot_date, reduction_price))
+                    print("    %s    -%.8f %s {%.2f USD} [%s] (lot cleared %s) @ %.2f USD" % (reduction_account, lot, reduction_unit, lot_price, lot_date, date, reduction_price))
                     if '-d' == opt:
                         if original_reduction_unit != 'USD':
                             print("    ; Reduction price converted from @ %s" % (original_reduction_price))
@@ -393,7 +393,7 @@ for i in range(len(lines)):
                     linfo = reduce_lot(stack, reductions)
                     lot_date, lot, lot_unit, lot_price, reduction_date, reduction, reduction_unit, original_reduction_price, reduction_price, reduction_account, updated_lot, original_reduction_unit, duration = linfo[0], linfo[1], linfo[2], linfo[3], linfo[4], linfo[5], linfo[6], linfo[7], linfo[8], linfo[9], linfo[10], linfo[11], linfo[12]
 
-            print("    %s    -%.8f %s {%.2f USD} [%s] @ %.2f USD" % (reduction_account, reduction, reduction_unit, lot_price, lot_date, reduction_price))
+            print("    %s    -%.8f %s {%.2f USD} [%s] (lot reduced %s) @ %.2f USD" % (reduction_account, reduction, reduction_unit, lot_price, lot_date, date, reduction_price))
             if '-d' == opt:
                 if original_reduction_unit != 'USD':
                     print("    ; Reduction price converted from @ %s" % (original_reduction_price))
