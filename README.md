@@ -75,3 +75,12 @@ non-programming work.
 Writen by Joel Swanson. Version 0.03. Copyright 2017. Licensed under
 the GNU General Public License (GPL) Version 3. Absolutely no warranty,
 this program provided 'as is'. See https://www.gnu.org/licenses/gpl.html.
+
+
+** Note **
+For a quick and dirty look at all reducing transactions, use grep on the
+output as follows:
+
+$ python TaxingLots.py [input.dat] Assets:Crypto d | grep -A 1 'lot reduced'
+
+2020-05-18 I plan to write a function to generate gains/losses output report, callable as a commandline option.
