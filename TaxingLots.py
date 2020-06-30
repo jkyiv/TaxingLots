@@ -466,7 +466,7 @@ for commodity in holdings:         # Print commodity lots and total holdings.
     for i in range(len(holdings[commodity])):
         amt = float(holdings[commodity][i][1])
         total = float(total) + amt
-        print("%s %f %s %s" % (holdings[commodity][i][0], amt, commodity, holdings[commodity][i][3]))
+        print("%f %s %s [%s]" % (amt, commodity, holdings[commodity][i][3], holdings[commodity][i][0]))
     print('Total holdings: %f %s.\n' % (float(total), commodity))
 
 if is_empty(reductions):
