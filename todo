@@ -1,0 +1,6 @@
+
+2020-06-24 Verify that asset purchase fees are included in cost basis
+
+2020-06-24 Add ability to track user's internal wallet to wallet transfers, without double-counting assets, and yet calculating gains/losses on network fees paid.
+
+2020-07-09 Test TaxingLots with sample data starting with two ETH sales, followed by a bunch of BTC sales.
