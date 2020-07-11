@@ -1,2 +1,9 @@
 *.pyc
 *~
+data/
+experiments/
+getrates-api.py
+notes/
+rates-api.json
+rates.csv
+tests/
