@@ -260,11 +260,12 @@ for post in ledger.read_journal(filename).query(query):
     rates = getrates.getrates(date)
     commodity = '%s' % (post.amount.commodity)
     amount = '%s' % (post.amount)
+
     if len(posts) == 4:     # TODO Convert getrates to dict
         if commodity == 'BTC':
-            annotation = '{%.2f USD} [%s]' % (float(rates[3]), date)
+            annotation = '{%.8f USD} [%s]' % (float(rates[3]), date)
         elif commodity == 'LTC':
-            annotation = '{%.2f USD} [%s]' % (float(rates[5]), date)
+            annotation = '{%.8f USD} [%s]' % (float(rates[5]), date)
         amount = '%s %s' % (amount, annotation)
         s = '%s %s %s' % (date, amount, post.account)
     print(s)
@@ -417,34 +418,38 @@ for i in range(len(lines)):
         m1a = re.search(r'(Assets:Crypto:Ether\s{1,}(\d+(\.\d+)?)\sETH\s@\s)((\d+(\.\d+)?)\sBTC)', lines[i])
         m1b = re.search(r'(Assets:Crypto:LTC\s{1,}(\d+(\.\d+)?)\sLTC\s@\s)((\d+(\.\d+)?)\sBTC)', lines[i])
         m3 = re.search(r'((Assets|Expenses|Liabilities).*\s{1,})((-?\d+(\.\d+)?)\s(EUR|GBP))', lines[i])
-        m3a = re.search(r'(Expenses:Fees.*\s{1,})((\d+(\.\d+)?)\s(BTC|LTC))', lines[i])
+        m3a = re.search(r'(Expenses:Fees.*\s{1,})((\d+(\.\d+)?)\s(BTC|LTC|ETH))', lines[i])
         m3b = re.search(r'(Assets:Crypto:LTC\s{1,}((\d+(\.\d+)?)\sLTC))', lines[i])
+#        m3b = re.search(r'(Assets:Crypto:LTC\s{1,}((\d+(\.\d+)?)\sLTC))', lines[i])
         m3c = re.search(r'((Expenses|Liabilities).*\s{1,})((\d+(\.\d+)?)\s(BTC|LTC))', lines[i])
         m4 = re.search(r'(Income:CapitalGains)', lines[i])
         if m:
             pass   #            print('%s           ; Transaction No. %s' % (m.group(1), tx_num))
         elif m1a:
-            USDETH = convert_to_USD(m1a.group(4))                  # Converts ETH price in BTC to price in USD
+            USDETH = convert_to_USD(m1a.group(4))     # Converts ETH price in BTC to price in USD
             print("    %s%.2f USD     ; Originally @ %s BTC" % (m1a.group(1), USDETH, m1a.group(5)))
         elif m1b:
-            USDLTC = convert_to_USD(m1b.group(4))                  # Converts LTC price in BTC to price in USD
+            USDLTC = convert_to_USD(m1b.group(4))     # Converts LTC price in BTC to price in USD
             print("    %s%.f2 USD     ; Originally @ %s BTC" % (m1b.group(1), USDLTC, m1b.group(5)))
-        elif m3:
+        elif m3:                                      # Converts other Fiats to USD
             if m3.group(6) == 'EUR':
                 EUR_ref = convert_to_USD(m3.group(3))
                 print("    %s%.2f USD     ; Originally @ %s EUR" % (m3.group(1), EUR_ref, m3.group(4)))
             elif m3.group(6) == 'GBP':
                 GBP_ref = convert_to_USD(m3.group(3))
                 print("    %s%.2f USD     ; @ %s GBP" % (m3.group(1), GBP_ref, m3.group(4)))
-        elif m3a:
+        elif m3a:                                     # Converts cryptos to USD.
             if m3a.group(5) == 'BTC':
                 print('%s @ %.2f USD' % (lines[i][:-1], USDBTC))
             elif m3a.group(5) == 'LTC':
                 print('%s @ %.2f USD' % (lines[i][:-1], USDLTC))
+            elif m3a.group(5) == 'ETH':
+                print('%s @ %.2f USD' % (lines[i][:-1], USDETH))
         elif m3b:
             print('%s @ %s USD' % (lines[i][:-1], USDLTC))
-        # TODO (2020-04-25) debug m3c (hopefully it should add the USD rate for postings
-        # like 2013-12-13 Expenses:Unknown    0.0003 BTC. Currently 
+        # TODO (2020-04-25) debug m3c
+        # TODO (2020-07-10) Currently, transactions with altcoin/bitcoin trades end up with 3 commodities
+        # (e.g. LTC, USD, and BTC), leaving ledger-cli unsure how to balance TaxingLots' output. 
         elif m3c:
             if m3c.group(6) == 'BTC':
                 USDBTC = convert_to_USD(m3c.group(3))
@@ -466,8 +471,8 @@ for commodity in holdings:         # Print commodity lots and total holdings.
     for i in range(len(holdings[commodity])):
         amt = float(holdings[commodity][i][1])
         total = float(total) + amt
-        print("%f %s %s [%s]" % (amt, commodity, holdings[commodity][i][3], holdings[commodity][i][0]))
-    print('Total holdings: %f %s.\n' % (float(total), commodity))
+        print("%.8f %s %s [%s]" % (amt, commodity, holdings[commodity][i][3], holdings[commodity][i][0]))
+    print('Total holdings: %.8f %s.\n' % (float(total), commodity))
 
 if is_empty(reductions):
     print("    All lots have been reduced.\n")
