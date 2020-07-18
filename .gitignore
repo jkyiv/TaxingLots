@@ -7,3 +7,5 @@ notes/
 rates-api.json
 rates.csv
 tests/
+
+*.ledger
