@@ -274,16 +274,16 @@ for post in ledger.read_journal(filename).query(query):
     if len(s) == 7:
         s[3] = "%s %s" % (s[3], s[4])  # Combine amount and unit in {}
         del s[4:6]                     # Remove redundant unit and date
-    
-    if commodity in holdings:          # Fill holdings with positive commodity
-        if commodity == s[2]:          # postings. Reductions sorted out. 
-            amt = float(s[1])
-            if amt > 0:
+
+    if commodity == s[2]:
+        amt = float(s[1])
+        if amt < 0:                    # Reductions sorted to separate list
+            reductions.append(s)
+        else:               # Fill holdings with positive commodity posting
+            if commodity in holdings:
                 holdings[commodity].append(s)
-            elif amt < 0:
-                reductions.append(s)
-    else:
-        holdings[commodity] = [s]
+            else:
+                holdings[commodity] = [s]
 
 for commodity in holdings:     # Print lists of commodity holdings
     print('\n%s lots:' % (commodity))
